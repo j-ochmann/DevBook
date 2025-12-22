@@ -4,7 +4,7 @@
 - *kurzívu* obalte *\*hvězdičkou\** nebo _\_podtržítkem\__.
 - ~~přeškrtnutí~~ obalte \~\~vlnovkami\~\~.
 2. Nadpisy
-- 1 až 6 #křížků na začátku řádku určuje úroveň:
+- 1 až 6 # křížků na začátku řádku určuje úroveň:
 # Nadpis 1 (největší)
 ## Nadpis 2
 ### Nadpis 3
@@ -33,3 +33,19 @@ Při použití kódu buďte obezřetní.
 
 Podrobný přehled syntaxe naleznete v [dokumentaci Markdown Guide](www.markdownguide.org).
 Pro pohodlné psaní můžete využít online editor [StackEdit](stackedit.io).
+
+7. Ikony
+Technické a ASCII varianty
+[i] – informace
+?> – nápověda/dotaz
+kniha:
+- 📕 červená (U+1F4D5)
+- 📗 zelená (U+1F4D7)
+- 📘 modrá (U+1F4D8)
+- 📙 oranžová (U+1F4D9)
+- 📖 otevřená (U+1F4D6)
+- 🕮 dekorativní (U+1F56E)
+- 📚 stoh (U+1F4DA)
+- 📓 zápisník (U+1F4D3)
+- 📒 kroužkový blok (U+1F4D2)
+- 🔖 záložka (U+1F516)
