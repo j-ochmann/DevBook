@@ -22,9 +22,9 @@ Ověření:
 gcc --version
 ```
 ## 2️⃣ Vytvoř zdrojový soubor
-Např. soubor hello.c:
+Např. soubor hello_world.c:
 ```bash
-nano hello.c
+nano hello_world.c
 ```
 Do něj napiš:
 ```c
@@ -42,7 +42,7 @@ Ulož:
 ## 3️⃣ Přelož program
 V tom samém adresáři spusť:
 ```bash
-gcc hello.c -o hello
+gcc hello_world.c -o hello_world
 ```
 Co se stalo:
 - hello.c → zdroják
@@ -54,28 +54,23 @@ ls
 Měl by tam být soubor hello
 
 4️⃣ Spusť program
-./hello
-
-
+```bash
+./hello_world
+```
 Výstup:
-
+```bash
 Hello, world!
-
+```
 5️⃣ (Volitelné) Překlad s varováními – doporučeno
 
 Pro správné návyky:
-
-gcc -Wall -Wextra -Werror hello.c -o hello
-
-
+```bash
+gcc -Wall -Wextra -Werror hello_world.c -o hello_world
+```
 To tě donutí psát čistý a bezpečný C kód.
 
 6️⃣ Co je dobré vědět hned od začátku
-
-main vždy vrací int
-
-return 0; = program skončil OK
-
-stdio.h je standardní knihovna pro vstup/výstup
-
-./ říká shellu „spusť soubor z aktuálního adresáře“
+- main vždy vrací int
+- return 0; = program skončil OK
+- stdio.h je standardní knihovna pro vstup/výstup
+- ./ říká shellu „spusť soubor z aktuálního adresáře“
