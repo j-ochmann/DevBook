@@ -1,4 +1,11 @@
 # Git
+## Zkratka
+```bash
+clear &&
+git add . &&
+git commit -m "gc" &&
+git push
+```
 ## Instalace (Debian)
 ```bash
 sudo apt update
@@ -39,13 +46,6 @@ Všimněte si varování u commitu.
 git config --global user.name "vaše jméno"
 git config --global user.email "vas@email.com"
 git commit --amend --reset-author
-```
-Zkratka:
-```bash
-clear
-git add .
-git commit -m "gc"
-git push
 ```
 ## Krok 5: Nastavení SSH (Doporučeno pro budoucí práce)
 Vygenerujte SSH klíč: 
