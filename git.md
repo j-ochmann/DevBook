@@ -8,34 +8,17 @@ sudo apt install git
 Přejděte do adresáře vašeho projektu:
 ```bash
 cd /cesta/k/vasemu/projektu
-```
-Inicializujte Git v projektu:
-```bash
-git init
-```
-Přidejte všechny soubory do "staging" oblasti:
-```bash
-git add .
-```
-Udělejte první commit:
-```bash
+git init  # Inicializuje Git v projektu
+git add . # Přidá všechny soubory do "staging" oblasti
 git commit -m "Počáteční commit projektu"
 ```
 ## Vytvoření repozitáře na GitHubu
-- Přihlaste se na GitHub a klikněte na 'New repository' (nový repozitář) a pojmenujte ho. 
-## Krok 4: Propojení a nahrání na GitHub
-Zkopírujte URL vašeho GitHub repozitáře (např. github.com).
-Přidejte vzdálený repozitář:
+Přihlaste se na GitHub a klikněte na 'New repository' (nový repozitář) a pojmenujte ho. 
+### Propojení a nahrání na GitHub
+Zkopírujte a přidejte URL vašeho GitHub repozitáře.
 ```bash
 git remote add origin github.com:uživatel/repozitář.git
 ```
-
-jindrich@z570:~/Workspace/DevBook$ git push -u origin main
-
-jindrich@z570:~/Workspace/DevBook$ git branch -M main
-jindrich@z570:~/Workspace/DevBook$ git push -u origin main
-
-
 Pushněte (nahrajte) lokální kód na GitHub:
 ```bash
 git push -u origin main # nebo master, záleží na názvu hlavní větve
