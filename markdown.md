@@ -35,9 +35,6 @@ Podrobný přehled syntaxe naleznete v [dokumentaci Markdown Guide](www.markdown
 Pro pohodlné psaní můžete využít online editor [StackEdit](stackedit.io).
 
 7. Ikony
-Technické a ASCII varianty
-[i] – informace
-?> – nápověda/dotaz
 kniha:
 - 📕 červená (U+1F4D5)
 - 📗 zelená (U+1F4D7)
@@ -49,3 +46,6 @@ kniha:
 - 📓 zápisník (U+1F4D3)
 - 📒 kroužkový blok (U+1F4D2)
 - 🔖 záložka (U+1F516)
+- Technické a ASCII varianty
+* [i] – informace
+* ?> – nápověda/dotaz
