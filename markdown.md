@@ -1,13 +1,16 @@
-# \# Markdown (největší nadpis)
+# Markdown
 1. Formátování
-- tučné obalte **\*\*hvězdičkami\*\*** nebo __\_\_podtržítky\_\___ 
-- kurzívu obalte *\*hvězdičkou\** nebo _\_podtržítkem\__.
-- \~\~Přeškrtnutí\~\~ obalte dvěma vlnovkami.
+- **tučné** obalte **\*\*hvězdičkami\*\*** nebo __\_\_podtržítky\_\___ 
+- *kurzívu* obalte *\*hvězdičkou\** nebo _\_podtržítkem\__.
+- ~~přeškrtnutí~~ obalte dvěma ~~\~\~vlnovkami\~\~~~.
 2. Nadpisy
-Nadpisy se tvoří pomocí znaku křížku # na začátku řádku. Počet křížků určuje úroveň nadpisu:
+- se tvoří pomocí #. Počet křížků (1 až 6) určuje úroveň:
 # Nadpis 1 (největší)
 ## Nadpis 2
-### Nadpis 3 až po ###### Nadpis 6.
+### Nadpis 3
+#### Nadpis 4
+##### Nadpis 5
+###### Nadpis 6  (nejmenší)
 3. Seznamy
 Odrážkový seznam: Použijte hvězdičku *, plus + nebo pomlčku - následovanou mezerou.
 Číslovaný seznam: Použijte číslici s tečkou (např. 1. ).
