@@ -3,8 +3,8 @@
 ## 0️⃣ Zkratka
 ```bash
 clear &&
-gcc -Wall -Wextra -Werror hello_world.c -o hello_world
-&& ./hello_world
+gcc -Wall -Wextra -Werror hello_world.c -o hello_world &&
+./hello_world
 ```
 ## 1️⃣ Nainstaluj C kompilátor (gcc)
 
@@ -45,13 +45,13 @@ V tom samém adresáři spusť:
 gcc hello_world.c -o hello_world
 ```
 Co se stalo:
-- hello.c → zdroják
-- -o hello → výsledný spustitelný soubor hello
+- hello_world.c → zdroják
+- -o hello_world → výsledný spustitelný soubor hello_world
 Zkontroluj:
 ```bash
 ls
 ```
-Měl by tam být soubor hello
+Měl by tam být soubor hello_world
 
 4️⃣ Spusť program
 ```bash
