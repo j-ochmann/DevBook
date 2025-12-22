@@ -27,7 +27,7 @@ Např. soubor hello_world.c:
 nano hello_world.c
 ```
 Do něj napiš:
-```c
+```c  {file=hello_world.c}
 #include <stdio.h>
 
 int main(void) {
@@ -78,7 +78,7 @@ To tě donutí psát čistý a bezpečný C kód.
 ```bash
 nano read_number.c
 ```
-```c
+```c {file=read_number.c}
 #include <stdio.h>
 int main (void)
 {
