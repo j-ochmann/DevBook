@@ -1,8 +1,8 @@
 #include <stdio.h>
 int main (void)
 {
-    printf("Dalsi jednoduchy program ");
-    printf("napsany v ");
-    printf("jazyce C");
-    return 0;
+    printf("Hello world!\n");
+    printf("Goodbye world!\n");
+    printf("");
+   return 0;
 }

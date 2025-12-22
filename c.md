@@ -1,5 +1,11 @@
 # C Tahák
 
+## 0️⃣ Zkratka
+```bash
+clear &&
+gcc -Wall -Wextra -Werror hello_world.c -o hello_world
+&& ./hello_world
+```
 ## 1️⃣ Nainstaluj C kompilátor (gcc)
 
 Otevři terminál a zadej:
