@@ -33,6 +33,7 @@ Při použití kódu buďte obezřetní.
 
 Podrobný přehled syntaxe naleznete v [dokumentaci Markdown Guide](www.markdownguide.org).
 Pro pohodlné psaní můžete využít online editor [StackEdit](stackedit.io).
+>GitHub specifická 'příchuť' Markdown: [GitHub Flavored Markdown Spec](https://github.github.com/gfm/)
 
 7. Ikony
 - kniha:
@@ -48,4 +49,4 @@ Pro pohodlné psaní můžete využít online editor [StackEdit](stackedit.io).
     * 🔖 záložka (U+1F516)
 - Technické a ASCII varianty
   * [i] – informace
-  * ?> – nápověda/dotaz
+  * ?> – nápověda/dotaz  
