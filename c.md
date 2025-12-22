@@ -74,3 +74,19 @@ To tě donutí psát čistý a bezpečný C kód.
 - return 0; = program skončil OK
 - stdio.h je standardní knihovna pro vstup/výstup
 - ./ říká shellu „spusť soubor z aktuálního adresáře“
+
+```bash
+nano read_number.c
+```
+```c
+#include <stdio.h>
+int main (void)
+{
+    int cislo;
+    printf("Zadejte cele cislo: ");
+    scanf("%d",&cislo);
+    printf("Zadal jste: %d\n", cislo);
+    return 0;
+}
+
+```
