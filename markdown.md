@@ -47,5 +47,5 @@ kniha:
 - 📒 kroužkový blok (U+1F4D2)
 - 🔖 záložka (U+1F516)
 - Technické a ASCII varianty
-* [i] – informace
-* ?> – nápověda/dotaz
+  * [i] – informace
+  * ?> – nápověda/dotaz
