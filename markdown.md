@@ -1,8 +1,8 @@
 # Markdown
-1. Základní formátování textu
-Tučné písmo: Text obalte dvěma hvězdičkami **text** nebo podtržítky __text__.
-Kurzíva: Text obalte jednou hvězdičkou *text* nebo podtržítkem _text_.
-Přeškrtnutí: Text obalte dvěma vlnovkami ~~text~~.
+1. Základní formátování
+**Tučné** obalte dvěma hvězdičkami ****text**** nebo podtržítky ____text____.
+*Kurzíva* obalte jednou hvězdičkou *\*text\** nebo podtržítkem _\_text\__.
+~~Přeškrtnutí~~ obalte dvěma vlnovkami \~\~text\~\~.
 2. Nadpisy
 Nadpisy se tvoří pomocí znaku křížku # na začátku řádku. Počet křížků určuje úroveň nadpisu:
 # Nadpis 1 (největší)
