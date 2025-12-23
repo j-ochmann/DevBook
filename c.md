@@ -104,7 +104,8 @@ projekt/
 └── CMakeLists.txt   # Konfigurace sestavení
 Při použití kódu buďte obezřetní.
 ```
-Tip: `Pro` názvy složek používejte vždy malá písmena a místo mezer podtržítka nebo pomlčky,
+`Tip:`
+>Pro názvy složek používejte vždy malá písmena a místo mezer podtržítka nebo pomlčky,
 >abyste se vyhnuli problémům s kompatibilitou na různých operačních systémech.
 
 ## Implementace 'tangle' v C (tangle_fgets.c)
