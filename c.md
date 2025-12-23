@@ -93,9 +93,9 @@ int main (void)
 
 
 
-## Implementace 'tangle' v C (tangle.c)
+## Implementace 'tangle' v C (tangle_fgets.c)
 Otevře Markdown soubor, najde bloky {file=...} a jejich obsah uloží do příslušných souborů.
-```c {file=tangle.c}
+```c {file=tangle_fgets.c}
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -156,8 +156,7 @@ který umí procházet bloky kódu pomocí callback funkcí.
 Použití knihovny MD4C je pro tento účel vynikající volbou,
 protože jde o jeden z nejrychlejších a nejkompaktnějších parserů napsaných v čistém C (skládá se v podstatě jen z md4c.c a md4c.h).
 Níže je implementace "tangleru", který využívá MD4C k detekci bloků kódu a extrakci atributu {file=...} z jejich "info stringu" (text za trojitými apostrofy).
-Implementace s MD4C (tangle_md4c.c)
-
+## Implementace s MD4C (tangle_md4c.c)
 ```c {file=tangle_md4c.c}
 #include <stdio.h>
 #include <stdlib.h>
@@ -259,7 +258,45 @@ Do složky programu stáhněte soubory md4c.c a md4c.h z oficiálního repozitá
 gcc tangle_md4c.c md4c.c -o tangle_md4c # kompilace
 /tangle_md4c dokument.md                # spuštění
 ```
-#### Výhody:
+#### Výhody
 - robustnost: MD4C správně rozpozná bloky kódu i v seznamech nebo citacích, což jednoduchý parser s fgets může minout.
 - rychlost: Jeden z nejrychlejších způsobů, jak parsovat Markdown.
 - atributy: Správně pracuje s "info stringem" za trojitými apostrofy, což je standardní místo pro metadata v moderním Markdownu.
+
+### Vytvoření Makefile pro tento proces vyžaduje řetězení dvou kroků
+1. extrakci kódů z Markdownu (tangle)
+2. kompilaci výsledných *.c souboru.
+#### Příklad Makefile, který počítá s programem tangle
+(vytvořeným pomocí MD4C nebo **fgets**)
+```makefile {file=Makefile}
+# Nastavení kompilátoru a jmen souborů
+CC = gcc
+CFLAGS = -Wall -Wextra
+TANGLER = ./tangle_fgets
+SOURCE_MD = dokument.md
+# Název vygenerovaného souboru (musí odpovídat tomu v {file=...})
+GENERATED_C = hello_world.c
+TARGET = hello_world
+
+# Výchozí pravidlo: sestavit výslednou binárku
+all: $(TARGET)
+
+# 1. Pravidlo pro vytvoření binárky z vygenerovaného .c souboru
+$(TARGET): $(GENERATED_C)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# 2. Pravidlo pro "tangle" (extrakci) .c souboru z Markdownu
+# Toto pravidlo se spustí, pokud dokument.md byl změněn a je novější než .c soubor
+$(GENERATED_C): $(SOURCE_MD) $(TANGLER)
+	$(TANGLER) $(SOURCE_MD)
+
+# 3. Pomocné pravidlo pro sestavení samotného tangleru (pokud ho nemáte)
+$(TANGLER): tangle_md4c.c md4c.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+# Úklid vygenerovaných souborů
+clean:
+	rm -f $(TARGET) $(GENERATED_C)
+
+.PHONY: all clean
+```
