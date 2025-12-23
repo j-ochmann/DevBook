@@ -1,3 +1,8 @@
 build/
 examples/
+bin/                  # Spustitelné soubory (pokud jsou mimo build)
+*.o                   # Objektové soubory (Linux/macOS)
+*.obj                 # Objektové soubory (Windows)
+*.exe                 # Spustitelné soubory Windows
+*.a, *.so, *.lib, *.dll # Knihovny (statické i dynamické)
 .env
