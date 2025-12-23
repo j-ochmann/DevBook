@@ -90,7 +90,22 @@ int main (void)
 
 ```
 
-
+## Doporučená struktura projektu
+Pokud chcete mít projekt profesionálně organizovaný, standardní rozložení vypadá takto: 
+```text
+projekt/
+├── src/             # Váš zdrojový kód (.c, .cpp)
+├── include/         # Vaše hlavičkové soubory (.h)
+├── external/        # Cizí knihovny (např. md4c)
+│   └── md4c/
+│       ├── md4c.h
+│       └── md4c.c
+├── build/           # Výstupy kompilace (ignore v gitu)
+└── CMakeLists.txt   # Konfigurace sestavení
+Při použití kódu buďte obezřetní.
+```
+Tip: `Pro` názvy složek používejte vždy malá písmena a místo mezer podtržítka nebo pomlčky,
+>abyste se vyhnuli problémům s kompatibilitou na různých operačních systémech.
 
 ## Implementace 'tangle' v C (tangle_fgets.c)
 Otevře Markdown soubor, najde bloky {file=...} a jejich obsah uloží do příslušných souborů.
@@ -266,12 +281,12 @@ gcc tangle_md4c.c md4c.c -o tangle_md4c # kompilace
 2. kompilaci výsledných *.c souboru.
 #### Příklad Makefile, který počítá s programem tangle
 (vytvořeným pomocí MD4C nebo **fgets**)
-```makefile {file=Makefile}
+```makefile {file=MakefileOld}
 # Nastavení kompilátoru a jmen souborů
 CC = gcc
 CFLAGS = -Wall -Wextra
 TANGLER = ./tangle
-SOURCE_MD = c.md
+SOURCE_MD = ../../c.md
 # Název vygenerovaného souboru (musí odpovídat tomu v {file=...})
 GENERATED_C = hello_world.c
 TARGET = hello_world
@@ -296,6 +311,33 @@ $(TANGLER): tangle_fgets.c
 # Úklid vygenerovaných souborů
 clean:
 	rm -f $(TARGET) $(GENERATED_C)
+
+.PHONY: all clean
+```
+
+```makefile {file=Makefile}
+SOURCE_MD = ../../c.md
+TANGLER = ./tangle_fgets
+
+# Najde všechny {file=...}
+GENERATED_C := $(shell grep -oP '(?<={file=)[^}]+' $(SOURCE_MD))
+
+# Z názvů .c souborů vytvoří názvy výsledných binárek (bez přípony .c)
+TARGETS = $(GENERATED_C:.c=)
+
+all: $(TARGETS)
+
+# Pravidlo pro kompilaci každé binárky z jejího .c souboru
+%: %.c
+	gcc -Wall -O2 -o $@ $<
+
+# Pravidlo, které spustí tangler, pokud se změnil Markdown.
+# Vytvoří VŠECHNY .c soubory najednou.
+$(GENERATED_C): $(SOURCE_MD)
+	$(TANGLER) $(SOURCE_MD)
+
+clean:
+	rm -f $(TARGETS) $(GENERATED_C)
 
 .PHONY: all clean
 ```
