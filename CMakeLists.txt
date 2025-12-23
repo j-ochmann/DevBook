@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
-project(DevBook C)
+project(TangleProject C)
 
-add_executable(DevBook src/main.c)
+set(CMAKE_C_STANDARD 11)
 
-target_include_directories(dev_book PRIVATE external/md4c)
+# Možnost volby implementace při konfiguraci: cmake -DUSE_MD4C=ON ..
+option(USE_MD4C "Pouzit robustni MD4C parser" OFF)
 
-target_sources(dev_book PRIVATE external/md4c/md4c.c)
-
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/examples/generated_example.c
-    COMMAND python3 scripts/generate_code.py ${CMAKE_SOURCE_DIR}/docs/examples_src/tutorial.md
-    DEPENDS ${CMAKE_SOURCE_DIR}/docs/examples_src/tutorial.md
-    COMMENT "Generuji příklad z Markdownu..."
-)
+if(USE_MD4C)
+    message(STATUS "Buduji s vyuzitim MD4C")
+    # Predpoklada se, ze md4c.c a md4c.h jsou v aktualnim adresari
+    add_executable(tangle main.c tangle_md4c.c md4c.c)
+    target_compile_definitions(tangle PRIVATE USE_MD4C)
+else()
+    message(STATUS "Buduji jednoduchou verzi (fgets)")
+    add_executable(tangle main.c tangle_simple.c)
+endif()
