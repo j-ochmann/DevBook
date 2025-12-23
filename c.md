@@ -53,7 +53,7 @@ ls
 ```
 Měl by tam být soubor hello_world
 
-4️⃣ Spusť program
+## 4️⃣ Spusť program
 ```bash
 ./hello_world
 ```
@@ -61,7 +61,7 @@ Výstup:
 ```bash
 Hello, world!
 ```
-5️⃣ (Volitelné) Překlad s varováními – doporučeno
+## 5️⃣ (Volitelné) Překlad s varováními – doporučeno
 
 Pro správné návyky:
 ```bash
@@ -69,12 +69,11 @@ gcc -Wall -Wextra -Werror hello_world.c -o hello_world
 ```
 To tě donutí psát čistý a bezpečný C kód.
 
-6️⃣ Co je dobré vědět hned od začátku
+## 6️⃣ Co je dobré vědět hned od začátku
 - main vždy vrací int
 - return 0; = program skončil OK
 - stdio.h je standardní knihovna pro vstup/výstup
 - ./ říká shellu „spusť soubor z aktuálního adresáře“
-
 ```bash
 nano read_number.c
 ```
@@ -142,7 +141,6 @@ int main(int argc, char *argv[]) {
 gcc tangle.c -o tangle # kompilace
 ./tangle dokument.md   # spuštění
 ```
-
 ### Proč je to užitečné?
 - Single Source of Truth: Kód máte na jednom místě (v dokumentaci).
 - Automatizace: Můžete vytvořit Makefile, který spustí "tangler" a zkompiluje vygenerované .c soubory.
@@ -272,8 +270,8 @@ gcc tangle_md4c.c md4c.c -o tangle_md4c # kompilace
 # Nastavení kompilátoru a jmen souborů
 CC = gcc
 CFLAGS = -Wall -Wextra
-TANGLER = ./tangle_fgets
-SOURCE_MD = dokument.md
+TANGLER = ./tangle
+SOURCE_MD = c.md
 # Název vygenerovaného souboru (musí odpovídat tomu v {file=...})
 GENERATED_C = hello_world.c
 TARGET = hello_world
@@ -291,7 +289,8 @@ $(GENERATED_C): $(SOURCE_MD) $(TANGLER)
 	$(TANGLER) $(SOURCE_MD)
 
 # 3. Pomocné pravidlo pro sestavení samotného tangleru (pokud ho nemáte)
-$(TANGLER): tangle_md4c.c md4c.c
+$(TANGLER): tangle_fgets.c
+//$(TANGLER): tangle_md4c.c md4c.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 # Úklid vygenerovaných souborů
