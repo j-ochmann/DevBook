@@ -6,3 +6,17 @@ bin/                  # Spustitelné soubory (pokud jsou mimo build)
 *.exe                 # Spustitelné soubory Windows
 *.a, *.so, *.lib, *.dll # Knihovny (statické i dynamické)
 .env
+
+# Zachytí nepořádek z omylem spustěné kompilace přímo v kořenu projektu.
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json  # Pomůcka pro IDE
+
+# Vývojářovo nastavení IDE a editoru do společného projektu nepatří. 
+.vscode/              # Visual Studio Code
+.idea/                # CLion / JetBrains
+*.swp                 # Vim dočasné soubory
+.DS_Store             # Systémové soubory macOS
