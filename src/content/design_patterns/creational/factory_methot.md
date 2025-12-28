@@ -101,6 +101,19 @@ Once the class identifier is read, the framework calls Create, passing the ident
 A parameterized factory method has the following general form, where MyProduct and YourProduct are subclasses of Product:
 
 ```cpp
+class Product {};
+
+#ifdef Implementation1
+class MyProduct : public Product {};
+class YourProduct : public Product {};
+class TheirProduct : public Product {};
+typedef int ProductId;
+const int MINE = 1;
+const int YOURS = 2;
+const int THEIRS = 2
+```
+
+```cpp
 class Creator {
 public:
     virtual Product* Create(ProductId);
@@ -120,6 +133,12 @@ Overriding a parameterized factory method lets you easily and selectively extend
 For example, a subclass MyCreator could swap MyProduct and YourProduct and support a new TheirProduct subclass:
 
 ```cpp
+class MyCreator : public Creator {
+public:
+    virtual Product* Create(ProductId);
+};
+
+```cpp
 Product* MyCreator::Create (ProductId id) {
     if (id == YOURS) return new MyProduct;
     if (id == MINE) return new YourProduct;
@@ -135,9 +154,9 @@ Notice that the last thing this operation does is call Create on the parent clas
 
 3. *Language-specific variants and issues.* Different languages lend themselves to other interesting variations and caveats.
 
-Smalltalk programs often use a method that returns the class of the object to be instantiated. A Creator factory method can use this value to create a product, and a ConcreteCreator may store or even compute this value. The result is an even later binding for the type of ConcreteProduct to be instantiated.
+    Smalltalk programs often use a method that returns the class of the object to be instantiated. A Creator factory method can use this value to create a product, and a ConcreteCreator may store or even compute this value. The result is an even later binding for the type of ConcreteProduct to be instantiated.
 
-A Smalltalk version of the Document example can define a documentClass method on Application. The documentClass method returns the proper Document class for instantiating documents. The implementation of documentClass in MyApplication returns the MyDocument class. Thus in class Application we have
+    A Smalltalk version of the Document example can define a documentClass method on Application. The documentClass method returns the proper Document class for instantiating documents. The implementation of documentClass in MyApplication returns the MyDocument class. Thus in class Application we have
 
 ```smalltalk
 clientMethod

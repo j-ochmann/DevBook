@@ -98,6 +98,12 @@ We’ll define a variant of the CreateMaze member function (page 84) that takes 
 The MazeBuilder class defines the following interface for building mazes:
 
 ```cpp
+#include "C++/MazeParts.H"
+#include "C++/MazeGame.H"
+#include <iostream.h>
+```
+
+```cpp
 class MazeBuilder {
 public:
     virtual void BuildMaze() { }

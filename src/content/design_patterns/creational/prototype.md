@@ -88,19 +88,19 @@ Consider the following issues when implementing prototypes:
 
 1. Using a prototype manager. When the number of prototypes in a system isn’t fixed (that is, they can be created and destroyed dynamically), keep a registry of available prototypes. Clients won’t manage prototypes themselves but will store and retrieve them from the registry. A client will ask the registry for a prototype before cloning it. We call this registry a prototype manager.
 
-A prototype manager is an associative store that returns the prototype matching a given key. It has operations for registering a prototype under a key and for unregistering it. Clients can change or even browse through the registry at run-time. This lets clients extend and take inventory on the system without writing code.
+    A prototype manager is an associative store that returns the prototype matching a given key. It has operations for registering a prototype under a key and for unregistering it. Clients can change or even browse through the registry at run-time. This lets clients extend and take inventory on the system without writing code.
 
 2. Implementing the Clone operation. The hardest part of the Prototype pattern is implementing the Clone operation correctly. It’s particularly tricky when object structures contain circular references.
 
-Most languages provide some support for cloning objects. For example, Smalltalk provides an implementation of copy that’s inherited by all subclasses of Object. C++ provides a copy constructor. But these facilities don’t solve the “shallow copy versus deep copy” problem [GR83]. That is, does cloning an object in turn clone its instance variables, or do the clone and original just share the variables?
+    Most languages provide some support for cloning objects. For example, Smalltalk provides an implementation of copy that’s inherited by all subclasses of Object. C++ provides a copy constructor. But these facilities don’t solve the “shallow copy versus deep copy” problem [GR83]. That is, does cloning an object in turn clone its instance variables, or do the clone and original just share the variables?
 
-A shallow copy is simple and often sufficient, and that’s what Smalltalk provides by default. The default copy constructor in C++ does a memberwise copy, which means pointers will be shared between the copy and the original. But cloning prototypes with complex structures usually requires a deep copy, because the clone and the original must be independent. Therefore you must ensure that the clone’s components are clones of the prototype’s components. Cloning forces you to decide what if anything will be shared.
+    A shallow copy is simple and often sufficient, and that’s what Smalltalk provides by default. The default copy constructor in C++ does a memberwise copy, which means pointers will be shared between the copy and the original. But cloning prototypes with complex structures usually requires a deep copy, because the clone and the original must be independent. Therefore you must ensure that the clone’s components are clones of the prototype’s components. Cloning forces you to decide what if anything will be shared.
 
-If objects in the system provide Save and Load operations, then you can use them to provide a default implementation of Clone simply by saving the object and loading it back immediately. The Save operation saves the object into a memory buffer, and Load creates a duplicate by reconstructing the object from the buffer.
+    If objects in the system provide Save and Load operations, then you can use them to provide a default implementation of Clone simply by saving the object and loading it back immediately. The Save operation saves the object into a memory buffer, and Load creates a duplicate by reconstructing the object from the buffer.
 
 3. Initializing clones. While some clients are perfectly happy with the clone as is, others will want to initialize some or all of its internal state to values of their choosing. You generally can’t pass these values in the Clone operation, because their number will vary between classes of prototypes. Some prototypes might need multiple initialization parameters; others won’t need any. Passing parameters in the Clone operation precludes a uniform cloning interface.
 
-It might be the case that your prototype classes already define operations for (re)setting key pieces of state. If so, clients may use these operations immediately after cloning. If not, then you may have to introduce an Initialize operation (see the Sample Code section) that takes initialization parameters as arguments and sets the clone’s internal state accordingly. Beware of deep-copying Clone operations—the copies may have to be deleted (either explicitly or within Initialize) before you reinitialize them.
+    It might be the case that your prototype classes already define operations for (re)setting key pieces of state. If so, clients may use these operations immediately after cloning. If not, then you may have to introduce an Initialize operation (see the Sample Code section) that takes initialization parameters as arguments and sets the clone’s internal state accordingly. Beware of deep-copying Clone operations—the copies may have to be deleted (either explicitly or within Initialize) before you reinitialize them.
 
 ## Sample Code
 
@@ -109,31 +109,83 @@ We’ll define a MazePrototypeFactory subclass of the MazeFactory class (page 92
 MazePrototypeFactory augments the MazeFactory interface with a constructor that takes the prototypes as arguments:
 
 ```mermaid
+#ifdef SampleCode1
+#include "C++/MazeGame.H"
+#include "C++/MazeFactory.H"
+#include "C++/MazeParts.H"
+```
 
+```mermaid
+class MazePrototypeFactory : public MazeFactory {
+public:
+    MazePrototypeFactory(Maze*, Wall*, Room*, Door*);
+
+    virtual Maze* MakeMaze() const;
+    virtual Room* MakeRoom(int) const;
+    virtual Wall* MakeWall() const;
+    virtual Door* MakeDoor(Room*, Room*) const;
+
+private:
+    Maze* _prototypeMaze;
+    Room* _prototypeRoom;
+    Wall* _prototypeWall;
+    Door* _prototypeDoor;
+};
 ```
  
 The new constructor simply initializes its prototypes:
 
 ```mermaid
-
+MazePrototypeFactory::MazePrototypeFactory (
+    Maze* m, Wall* w, Room* r, Door* d
+) {
+   _prototypeMaze = m;
+   _prototypeWall = w;
+   _prototypeRoom = r;
+   _prototypeDoor = d;
+}
 ```
  
 The member functions for creating walls, rooms, and doors are similar: Each clones a prototype and then initializes it. Here are the definitions of MakeWall and MakeDoor:
 
 ```mermaid
+Wall* MazePrototypeFactory::MakeWall () const {
+    return _prototypeWall->Clone();
+}
 
+Door* MazePrototypeFactory::MakeDoor (Room* r1, Room *r2) const {
+    Door* door = _prototypeDoor->Clone();
+    door->Initialize(r1, r2);
+    return door;
+}
 ```
  
 We can use MazePrototypeFactory to create a prototypical or default maze just by initializing it with prototypes of basic maze components:
 
 ```mermaid
+void dummy () {
+```
 
+```mermaid
+MazeGame game;
+MazePrototypeFactory simpleMazeFactory(
+    new Maze, new Wall, new Room, new Door
+);
+
+Maze* maze = game.CreateMaze(simpleMazeFactory);
 ```
  
 To change the type of maze, we initialize MazePrototypeFactory with a different set of prototypes. The following call creates a maze with a BombedDoor and a RoomWithABomb:
 
 ```mermaid
+void dummy2 () {
+```
 
+```mermaid
+MazePrototypeFactory bombedMazeFactory(
+    new Maze, new BombedWall,
+    new RoomWithABomb, new Door
+);
 ```
  
 An object that can be used as a prototype, such as an instance of Wall, must support the Clone operation. It must also have a copy constructor for cloning. It may also need a separate operation for reinitializing internal state. We’ll add the Initialize operation to Door to let clients initialize the clone’s rooms.
@@ -141,33 +193,114 @@ An object that can be used as a prototype, such as an instance of Wall, must sup
 Compare the following definition of Door to the one on page 83:
 
 ```mermaid
+#endif
+#ifdef SampleCode2
+#define Door_H
+#define BombedWall_H
+#define DoorNeedingSpell_H
+#include "C++/MazeParts.H"
+```
 
+```mermaid
+class Door : public MapSite {
+public:
+    Door();
+    Door(const Door&);
+
+    virtual void Initialize(Room*, Room*);
+    virtual Door* Clone() const;
+
+    virtual void Enter();
+    Room* OtherSideFrom(Room*);
+private:
+    Room* _room1;
+    Room* _room2;
+};
+
+Door::Door (const Door& other) {
+    _room1 = other._room1;
+    _room2 = other._room2;
+}
+
+void Door::Initialize (Room* r1, Room* r2) {
+    _room1 = r1;
+    _room2 = r2;
+}
+
+Door* Door::Clone () const {
+    return new Door(*this);
+}
 ```
  
 The BombedWall subclass must override Clone and implement a corresponding copy constructor.
 
 ```mermaid
+class BombedWall : public Wall {
+public:
+    BombedWall();
+    BombedWall(const BombedWall&);
 
+    virtual Wall* Clone() const;
+    bool HasBomb();
+private:
+    bool _bomb;
+};
+
+BombedWall::BombedWall (const BombedWall& other) : Wall(other) {
+    _bomb = other._bomb;
+}
+
+Wall* BombedWall::Clone () const {
+    return new BombedWall(*this);
+}
+
+```cpp
+#endif
 ```
  
 Although BombedWall::Clone returns a Wall*, its implementation returns a pointer to a new instance of a subclass, that is, a BombedWall*. We define Clone like this in the base class to ensure that clients that clone the prototype don’t have to know about their concrete subclasses. Clients should never need to downcast the return value of Clone to the desired type.
 
 In Smalltalk, you can reuse the standard copy method inherited from Object to clone any MapSite. You can use MazeFactory to produce the prototypes you’ll need; for example, you can create a room by supplying the name #room. The MazeFactory has a dictionary that maps names to prototypes. Its make: method looks like this:
 
-```mermaid
-
+```smalltalk
+make: partName
+^ (partCatalog at: partName) copy
 ```
  
 Given appropriate methods for initializing the MazeFactory with prototypes, you could create a simple maze with the following code:
 
-```mermaid
-
+```smalltalk
+CreateMaze
+    on: (MazeFactory new
+        with: Door new named: #door;
+        with: Wall new named: #wall;
+        http://lci.cs.ubbcluj.ro/~raduking/Books/Design%20Patterns/pat3dfs.htm (6 of 8) [21/08/2002 19:08:51]Prototype
+        with: Room new named: #room;
+        yourself)
 ```
  
 where the definition of the on: class method for CreateMaze would be
 
-```mermaid
-
+```smalltalk
+on: aFactory
+    | room1 room2 |
+    room1 := (aFactory make: #room) location: 1@1.
+    room2 := (aFactory make: #room) location: 2@1.
+    door := (aFactory make: #door) from: room1 to: room2.
+    room1
+        atSide: #north put: (aFactory make: #wall);
+        atSide: #east put: door;
+        atSide: #south put: (aFactory make: #wall);
+        atSide: #west put: (aFactory make: #wall).
+    room2
+        atSide: #north put: (aFactory make: #wall);
+        atSide: #east put: (aFactory make: #wall);
+        atSide: #south put: (aFactory make: #wall);
+        atSide: #west put: door.
+    ^ Maze new
+        addRoom: room1;
+        addRoom: room2;
+        yourself
 ```
  
 ## Known Uses
