@@ -1,4 +1,4 @@
 export default defineConfig({
   site: 'https://j-ochmann.github.io',
-  base: '/DevHub', // URL j-ochmann.github.io/DevHub
+  base: '/devbook', // URL j-ochmann.github.io/devbook
 });
