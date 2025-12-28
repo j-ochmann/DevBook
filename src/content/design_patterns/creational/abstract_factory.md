@@ -20,14 +20,8 @@ Consider a user interface toolkit that supports multiple look-and-feel standards
 
 We can solve this problem by defining an abstract WidgetFactory class that declares an interface for creating each basic kind of widget. There’s also an abstract class for each kind of widget, and concrete subclasses implement widgets for specific look-and-feel standards. WidgetFactory’s interface has an operation that returns a new widget object for each abstract widget class. Clients call these operations to obtain widget instances, but clients aren’t aware of the concrete classes they’re using. Thus clients stay independent of the prevailing look and feel.
 
----
-config:
-  look: handDrawn
----
 ```mermaid
 classDiagram
-    direction LR
-    look handDrawn
     class WidgetFactory {
         <<abstract>>
         +CreateScrollBar()* ScrollBar
@@ -246,6 +240,11 @@ protected:
 }; 
 ```
 
+```cpp
+#define EnchantedMazeFactory_H
+#include "C++/MazeFactories.H"
+```
+
 Now suppose we want to make a maze game in which a room can have a bomb set in it. If the bomb goes off, it will damage the walls (at least). We can make a subclass of Room keep track of whether the room has a bomb in it and whether the bomb has gone off. We’ll also need a subclass of Wall to keep track of the damage done to the wall. We’ll call these classes RoomWithABomb and BombedWall.
 
 The last class we’ll define is BombedMazeFactory, a subclass of MazeFactory that ensures walls are of class BombedWall and rooms are of class RoomWithABomb. BombedMazeFactory only needs to override two functions:
@@ -263,10 +262,13 @@ Room* BombedMazeFactory::MakeRoom(int n) const {
 To build a simple maze that can contain bombs, we simply call `CreateMaze` with a `BombedMazeFactory`.
 
 ```cpp
+void dummy() {
+
 MazeGame game;
 BombedMazeFactory factory;
 
-game.CreateMaze(factory); 
+game.CreateMaze(factory);
+}
 ```
 
 CreateMaze can take an instance of `EnchantedMazeFactory` just as well to build enchanted mazes.
