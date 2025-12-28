@@ -112,9 +112,9 @@ Although the implementation of Adapter is usually straightforward, here are some
 
 2. *Pluggable adapters.* Let’s look at three ways to implement pluggable adapters for the TreeDisplay widget described earlier, which can lay out and display a hierarchical structure automatically.
 
-The first step, which is common to all three of the implementations discussed here, is to find a “narrow” interface for Adaptee, that is, the smallest subset of operations that lets us do the adaptation. A narrow interface consisting of only a couple of operations is easier to adapt than an interface with dozens of operations. For TreeDisplay, the adaptee is any hierarchical structure. A minimalist interface might include two operations, one that defines how to present a node in the hierarchical structure graphically, and another that retrieves the node’s children.
+    The first step, which is common to all three of the implementations discussed here, is to find a “narrow” interface for Adaptee, that is, the smallest subset of operations that lets us do the adaptation. A narrow interface consisting of only a couple of operations is easier to adapt than an interface with dozens of operations. For TreeDisplay, the adaptee is any hierarchical structure. A minimalist interface might include two operations, one that defines how to present a node in the hierarchical structure graphically, and another that retrieves the node’s children.
 
-The narrow interface leads to three implementation approaches:
+    The narrow interface leads to three implementation approaches:
 
     1. *Using abstract operations.* Define corresponding abstract operations for the narrow Adaptee interface in the TreeDisplay class. Subclasses must implement the abstract operations and adapt the hierarchically structured object. For example, a DirectoryTreeDisplay subclass will implement these operations by accessing the directory structure.
 
@@ -147,7 +147,7 @@ The narrow interface leads to three implementation approaches:
                 [:node | node createGraphicNode].
     ```
 
-If you’re building interface adaptation into a class, this approach offers a convenient alternative to subclassing.
+    If you’re building interface adaptation into a class, this approach offers a convenient alternative to subclassing.
 
 ## Sample Code
 
