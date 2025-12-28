@@ -21,6 +21,8 @@ Consider a user interface toolkit that supports multiple look-and-feel standards
 We can solve this problem by defining an abstract WidgetFactory class that declares an interface for creating each basic kind of widget. There’s also an abstract class for each kind of widget, and concrete subclasses implement widgets for specific look-and-feel standards. WidgetFactory’s interface has an operation that returns a new widget object for each abstract widget class. Clients call these operations to obtain widget instances, but clients aren’t aware of the concrete classes they’re using. Thus clients stay independent of the prevailing look and feel.
 
 ```mermaid
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+flowchart TD
 classDiagram
     class WidgetFactory {
         <<abstract>>
@@ -89,36 +91,86 @@ A WidgetFactory also enforces dependencies between the concrete widget classes. 
 
 ## Applicability
 Use the Abstract Factory pattern when
-- a system should be independent of how its products are created, composed, and represented.
-- a system should be configured with one of multiple families of products.
-- a family of related product objects is designed to be used together, and you need to enforce this constraint.
-- you want to provide a class library of products, and you want to reveal just their interfaces, not their implementations.
++ a system should be independent of how its products are created, composed, and represented.
++ a system should be configured with one of multiple families of products.
++ a family of related product objects is designed to be used together, and you need to enforce this constraint.
++ you want to provide a class library of products, and you want to reveal just their interfaces, not their implementations.
 
 ##Structure
 ```mermaid
+%%{ init: { 'classDiagram': { 'curve': 'stepBefore' } } }%%
 classDiagram
+    direction TD
+
+    class Client {
+    }
+
     class AbstractFactory {
-        +CreateProductA()
-        +CreateProductB()
+        <<interface>>
+        +createProductA()
+        +createProductB()
+    }
+    class WidgetFactory {
+        <<interface>>
+    }
+    AbstractFactory <|-- WidgetFactory
+
+    class ConcreteFactory {
+        +createProductA()
+        +createProductB()
+    }
+    class MotifWidgetFactory
+    class PMWidgetFactory
+    
+    AbstractFactory <|.. ConcreteFactory
+    ConcreteFactory <|-- MotifWidgetFactory
+    ConcreteFactory <|-- PMWidgetFactory
+
+    class AbstractProduct {
+        <<interface>>
+    }
+    class Window {
+        <<interface>>
+    }
+    class ScrollBar {
+        <<interface>>
+    }
+    AbstractProduct <|-- Window
+    AbstractProduct <|-- ScrollBar
+
+    class ConcreteProduct {
+    }
+    class MotifWindow
+    class MotifScrollBar
+    
+    Window <|.. MotifWindow
+    ScrollBar <|.. MotifScrollBar
+    ConcreteProduct <|-- MotifWindow
+    ConcreteProduct <|-- MotifScrollBar
+
+    %% Relace
+    Client --> AbstractFactory : uses
+    Client --> AbstractProduct : uses
+    ConcreteFactory --> ConcreteProduct : creates
 }
 ```
 
 ## Participants
-- **AbstractFactory** (WidgetFactory)
-+   declares an interface for operations that create abstract product objects.
-- **ConcreteFactory** (MotifWidgetFactory, PMWidgetFactory)
-+   implements the operations to create concrete product objects.
-- **AbstractProduct** (Window, ScrollBar)
-+   declares an interface for a type of product object.
-- **ConcreteProduct** (MotifWindow, MotifScrollBar)
-+   defines a product object to be created by the corresponding concrete factory.
-+   implements the AbstractProduct interface.
-- **Client**
-+   uses only interfaces declared by AbstractFactory and AbstractProduct classes.
++ **AbstractFactory** (WidgetFactory)
+    - declares an interface for operations that create abstract product objects.
++ **ConcreteFactory** (MotifWidgetFactory, PMWidgetFactory)
+    - implements the operations to create concrete product objects.
++ **AbstractProduct** (Window, ScrollBar)
+    - declares an interface for a type of product object.
++ **ConcreteProduct** (MotifWindow, MotifScrollBar)
+    - defines a product object to be created by the corresponding concrete factory.
+    - implements the AbstractProduct interface.
++ **Client**
+    - uses only interfaces declared by AbstractFactory and AbstractProduct classes.
 
 ## Collaborations
-- Normally a single instance of a ConcreteFactory class is created at run-time. This concrete factory creates product objects having a particular implementation. To create different product objects, clients should use a different concrete factory.
-- AbstractFactory defers creation of product objects to its ConcreteFactory subclass.
++ Normally a single instance of a ConcreteFactory class is created at run-time. This concrete factory creates product objects having a particular implementation. To create different product objects, clients should use a different concrete factory.
++ AbstractFactory defers creation of product objects to its ConcreteFactory subclass.
 
 ## Consequences
 The Abstract Factory pattern has the following benefits and liabilities:
