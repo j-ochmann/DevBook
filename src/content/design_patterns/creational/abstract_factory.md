@@ -21,8 +21,8 @@ Consider a user interface toolkit that supports multiple look-and-feel standards
 We can solve this problem by defining an abstract WidgetFactory class that declares an interface for creating each basic kind of widget. There’s also an abstract class for each kind of widget, and concrete subclasses implement widgets for specific look-and-feel standards. WidgetFactory’s interface has an operation that returns a new widget object for each abstract widget class. Clients call these operations to obtain widget instances, but clients aren’t aware of the concrete classes they’re using. Thus clients stay independent of the prevailing look and feel.
 
 ```mermaid
-flowchart TD
 classDiagram
+    direction TD
 
     class WidgetFactory {
         <<abstract>>
@@ -97,6 +97,7 @@ Use the Abstract Factory pattern when
 + you want to provide a class library of products, and you want to reveal just their interfaces, not their implementations.
 
 ##Structure
+
 ```mermaid
 classDiagram
     direction TD
@@ -106,52 +107,33 @@ classDiagram
 
     class AbstractFactory {
         <<interface>>
-        +createProductA()
-        +createProductB()
+        +createWindow()
+        +createScrollBar()
     }
-    class WidgetFactory {
-        <<interface>>
-    }
-    AbstractFactory <|-- WidgetFactory
+    note for AbstractFactory "WidgetFactory"
 
     class ConcreteFactory {
-        +createProductA()
-        +createProductB()
+        +createWindow()
+        +createScrollBar()
     }
-    class MotifWidgetFactory
-    class PMWidgetFactory
-    
-    AbstractFactory <|.. ConcreteFactory
-    ConcreteFactory <|-- MotifWidgetFactory
-    ConcreteFactory <|-- PMWidgetFactory
+    note for ConcreteFactory "MotifWidgetFactory, PMWidgetFactory"
 
     class AbstractProduct {
         <<interface>>
     }
-    class Window {
-        <<interface>>
-    }
-    class ScrollBar {
-        <<interface>>
-    }
-    AbstractProduct <|-- Window
-    AbstractProduct <|-- ScrollBar
+    note for AbstractProduct "Window, ScrollBar"
 
     class ConcreteProduct {
     }
-    class MotifWindow
-    class MotifScrollBar
-    
-    Window <|.. MotifWindow
-    ScrollBar <|.. MotifScrollBar
-    ConcreteProduct <|-- MotifWindow
-    ConcreteProduct <|-- MotifScrollBar
+    note for ConcreteProduct "MotifWindow, MotifScrollBar"
 
-    %% Relace
+    %% Vztahy
+    AbstractFactory <|-- ConcreteFactory
+    AbstractProduct <|-- ConcreteProduct
+    
     Client --> AbstractFactory : uses
     Client --> AbstractProduct : uses
-    ConcreteFactory --> ConcreteProduct : creates
-}
+    ConcreteFactory ..> ConcreteProduct : creates
 ```
 
 ## Participants
