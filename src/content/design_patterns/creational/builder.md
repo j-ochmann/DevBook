@@ -71,11 +71,11 @@ Here are key consequences of the Builder pattern:
 
 2. *It isolates code for construction and representation.* The Builder pattern improves modularity by encapsulating the way a complex object is constructed and represented. Clients needn’t know anything about the classes that define the product’s internal structure; such classes don’t appear in Builder’s interface.
 
-Each ConcreteBuilder contains all the code to create and assemble a particular kind of product. The code is written once; then different Directors can reuse it to build Product variants from the same set of parts. In the earlier RTF example, we could define a reader for a format other than RTF, say, an SGMLReader, and use the same TextConverters to generate ASCIIText, TeXText, and TextWidget renditions of SGML documents.
+    Each ConcreteBuilder contains all the code to create and assemble a particular kind of product. The code is written once; then different Directors can reuse it to build Product variants from the same set of parts. In the earlier RTF example, we could define a reader for a format other than RTF, say, an SGMLReader, and use the same TextConverters to generate ASCIIText, TeXText, and TextWidget renditions of SGML documents.
 
 3. *It gives you finer control over the construction process.* Unlike creational patterns that construct products in one shot, the Builder pattern constructs the product step by step under the director’s control. Only when the product is finished does the director retrieve it from the builder. Hence the Builder interface reflects the process of constructing the product more than other creational patterns. This gives you finer control over the construction process and consequently the internal structure of the resulting product.
 
-Implementation
+## Implementation
 
 Typically there’s an abstract Builder class that defines an operation for each component that a director may ask it to create. The operations do nothing by default. A ConcreteBuilder class overrides operations for components it’s interested in creating.
 
@@ -83,9 +83,9 @@ Here are other implementation issues to consider:
 
 1. *Assembly and construction interface.* Builders construct their products in step-by-step fashion. Therefore the Builder class interface must be general enough to allow the construction of products for all kinds of concrete builders.
 
-A key design issue concerns the model for the construction and assembly process. A model where the results of construction requests are simply appended to the product is usually sufficient. In the RTF example, the builder converts and appends the next token to the text it has converted so far.
+    A key design issue concerns the model for the construction and assembly process. A model where the results of construction requests are simply appended to the product is usually sufficient. In the RTF example, the builder converts and appends the next token to the text it has converted so far.
 
-But sometimes you might need access to parts of the product constructed earlier. In the Maze example we present in the Sample Code, the MazeBuilder interface lets you add a door between existing rooms. Tree structures such as parse trees that are built bottom-up are another example. In that case, the builder would return child nodes to the director, which then would pass them back to the builder to build the parent nodes.
+    But sometimes you might need access to parts of the product constructed earlier. In the Maze example we present in the Sample Code, the MazeBuilder interface lets you add a door between existing rooms. Tree structures such as parse trees that are built bottom-up are another example. In that case, the builder would return child nodes to the director, which then would pass them back to the builder to build the parent nodes.
 
 2. *Why no abstract class for products?* In the common case, the products produced by the concrete builders differ so greatly in their representation that there is little to gain from giving different products a common parent class. In the RTF example, the ASCIIText and the TextWidget objects are unlikely to have a common interface, nor do they need one. Because the client usually configures the director with the proper concrete builder, the client is in a position to know which concrete subclass of Builder is in use and can handle its products accordingly.
 
@@ -168,108 +168,108 @@ The StandardMazeBuilder constructor simply initializes _currentMaze.
 
 ```cpp
 StandardMazeBuilder::StandardMazeBuilder () {
- _currentMaze = 0;
- } 
+    _currentMaze = 0;
+} 
 ```
 
 BuildMaze instantiates a Maze that other operations will assemble and eventually return to the client (with GetMaze).
 
 ```cpp
 void StandardMazeBuilder::BuildMaze () {
- _currentMaze = new Maze;
- }
+    _currentMaze = new Maze;
+}
 
- Maze* StandardMazeBuilder::GetMaze () {
- return _currentMaze;
- } 
+Maze* StandardMazeBuilder::GetMaze () {
+    return _currentMaze;
+} 
 ```
 
 The BuildRoom operation creates a room and builds the walls around it:
 ```cpp
- void StandardMazeBuilder::BuildRoom (int n) {
- if (!_currentMaze->RoomNo(n)) {
- Room* room = new Room(n);
- _currentMaze->AddRoom(room);
+void StandardMazeBuilder::BuildRoom (int n) {
+    if (!_currentMaze->RoomNo(n)) {
+        Room* room = new Room(n);
+        _currentMaze->AddRoom(room);
 
- room->SetSide(North, new Wall);
- room->SetSide(South, new Wall);
- room->SetSide(East, new Wall);
- room->SetSide(West, new Wall);
- }
- } 
+        room->SetSide(North, new Wall);
+        room->SetSide(South, new Wall);
+        room->SetSide(East, new Wall);
+        room->SetSide(West, new Wall);
+    }
+} 
 ```
 To build a door between two rooms, StandardMazeBuilder looks up both rooms in the maze and finds their adjoining wall:
 ```cpp
 void StandardMazeBuilder::BuildDoor (int n1, int n2) {
- Room* r1 = _currentMaze->RoomNo(n1);
- Room* r2 = _currentMaze->RoomNo(n2);
- Door* d = new Door(r1, r2);
+    Room* r1 = _currentMaze->RoomNo(n1);
+    Room* r2 = _currentMaze->RoomNo(n2);
+    Door* d = new Door(r1, r2);
 
- r1->SetSide(CommonWall(r1,r2), d);
- r2->SetSide(CommonWall(r2,r1), d); 
- }
+    r1->SetSide(CommonWall(r1,r2), d);
+    r2->SetSide(CommonWall(r2,r1), d); 
+}
 ```
 Clients can now use CreateMaze in conjunction with StandardMazeBuilder to create a maze:
 ```cpp
 Maze* maze;
- MazeGame game;
- StandardMazeBuilder builder;
+MazeGame game;
+StandardMazeBuilder builder;
 
- game.CreateMaze(builder);
- maze = builder.GetMaze(); 
+game.CreateMaze(builder);
+maze = builder.GetMaze(); 
 ```
 We could have put all the StandardMazeBuilder operations in Maze and let each Maze build itself. But making Maze smaller makes it easier to understand and modify, and StandardMazeBuilder is easy to separate from Maze. Most importantly, separating the two lets you have a variety of MazeBuilders, each using different classes for rooms, walls, and doors.
 
 A more exotic MazeBuilder is CountingMazeBuilder. This builder doesn’t create a maze at all; it just counts the different kinds of components that would have been created.
 ```cpp
- class CountingMazeBuilder : public MazeBuilder {
- public:
- CountingMazeBuilder();
+class CountingMazeBuilder : public MazeBuilder {
+public:
+    CountingMazeBuilder();
 
- virtual void BuildMaze();
- virtual void BuildRoom(int);
- virtual void BuildDoor(int, int);
- virtual void AddWall(int, Direction);
+    virtual void BuildMaze();
+    virtual void BuildRoom(int);
+    virtual void BuildDoor(int, int);
+    virtual void AddWall(int, Direction);
 
- void GetCounts(int&, int&) const;
- private:
- int _doors;
- int _rooms;
- }; 
+    void GetCounts(int&, int&) const;
+    private:
+    int _doors;
+    int _rooms;
+}; 
 ```
 The constructor initializes the counters, and the overridden MazeBuilder operations increment them accordingly.
 ```cpp
 CountingMazeBuilder::CountingMazeBuilder () {
- _rooms = _door
-  }
+    _rooms = _door
+}
 
- void CountingMazeBuilder::BuildRoom (int) {
- _rooms++;
- }
+void CountingMazeBuilder::BuildRoom (int) {
+    _rooms++;
+}
 
- void CountingMazeBuilder::BuildDoor (int, int) {
- _doors++;
- }
+void CountingMazeBuilder::BuildDoor (int, int) {
+    _doors++;
+}
 
- void CountingMazeBuilder::GetCounts (
- int& rooms, int& doors
- ) const {
- rooms = _rooms;
- doors = _doors;
- }
+void CountingMazeBuilder::GetCounts (
+    int& rooms, int& doors
+) const {
+    rooms = _rooms;
+    doors = _doors;
+}
 ```
 Here’s how a client might use a CountingMazeBuilder:
 ```cpp
- int rooms, doors;
- MazeGame game;
- CountingMazeBuilder builder;
+int rooms, doors;
+MazeGame game;
+CountingMazeBuilder builder;
 
- game.CreateMaze(builder);
- builder.GetCounts(rooms, doors);
+game.CreateMaze(builder);
+builder.GetCounts(rooms, doors);
 
- cout << "The maze has "
- << rooms << " rooms and "
- << doors << " doors" << endl; 
+cout << "The maze has "
+    << rooms << " rooms and "
+    << doors << " doors" << endl; 
 ```
 ## Known Uses
 
@@ -284,6 +284,6 @@ The Service Configurator framework from the Adaptive Communications Environment 
 
 ## Related Patterns
 
-Abstract Factory (87) is similar to Builder in that it too may construct complex objects. The primary difference is that the Builder pattern focuses on constructing a complex object step by step. Abstract Factory’s emphasis is on families of product objects (either simple or complex). Builder returns the product as a final step, but as far as the Abstract Factory pattern is concerned, the product gets returned immediately.
+Abstract Factory is similar to Builder in that it too may construct complex objects. The primary difference is that the Builder pattern focuses on constructing a complex object step by step. Abstract Factory’s emphasis is on families of product objects (either simple or complex). Builder returns the product as a final step, but as far as the Abstract Factory pattern is concerned, the product gets returned immediately.
 
-A Composite (163) is what the builder often builds.
+A Composite is what the builder often builds.
