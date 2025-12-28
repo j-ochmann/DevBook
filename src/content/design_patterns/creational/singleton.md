@@ -67,37 +67,37 @@ Here are implementation issues to consider when using the Singleton pattern:
 
     The Singleton class is declared as
 
-```cpp
-#ifdef Implementation1
-```
+    ```cpp
+    #ifdef Implementation1
+    ```
 
-```cpp
-class Singleton {
-public:
-    static Singleton* Instance();
-protected:
-    Singleton();
-private:
-    static Singleton* _instance;
-};
-```
+    ```cpp
+    class Singleton {
+    public:
+        static Singleton* Instance();
+    protected:
+        Singleton();
+    private:
+        static Singleton* _instance;
+    };
+    ```
  
     The corresponding implementation is
 
-```cpp
-Singleton* Singleton::_instance = 0;
+    ```cpp
+    Singleton* Singleton::_instance = 0;
 
-Singleton* Singleton::Instance () {
-    if (_instance == 0) {
-        _instance = new Singleton;
+    Singleton* Singleton::Instance () {
+        if (_instance == 0) {
+            _instance = new Singleton;
+        }
+        return _instance;
     }
-    return _instance;
-}
-```
+    ```
 
-```cpp
-#endif
-```
+    ```cpp
+    #endif
+    ```
  
     Clients access the singleton exclusively through the Instance member function. The variable _instance is initialized to 0, and the static member function Instance returns its value, initializing it with the unique instance if it is 0. Instance uses lazy initialization; the value it returns isn’t created and stored until it’s first accessed.
 
