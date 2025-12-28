@@ -148,8 +148,8 @@ classDiagram
     class Client {
     }
     Client --> AbstractFactory
-    Client --> ConcreteFactory1
-    Client --> ConcreteFactory2
+    Client --> AbstractProductA
+    Client --> AbstractProductB
 ```
 
 ## Participants
