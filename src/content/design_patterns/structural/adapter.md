@@ -118,36 +118,36 @@ Although the implementation of Adapter is usually straightforward, here are some
 
     1. *Using abstract operations.* Define corresponding abstract operations for the narrow Adaptee interface in the TreeDisplay class. Subclasses must implement the abstract operations and adapt the hierarchically structured object. For example, a DirectoryTreeDisplay subclass will implement these operations by accessing the directory structure.
 
-    ```mermaid
+        ```mermaid
 
-    ```
+        ```
 
-    DirectoryTreeDisplay specializes the narrow interface so that it can display directory structures made up of FileSystemEntity objects.
+        DirectoryTreeDisplay specializes the narrow interface so that it can display directory structures made up of FileSystemEntity objects.
 
     2. *Using delegate objects.* In this approach, TreeDisplay forwards requests for accessing the hierarchical structure to a delegate object. TreeDisplay can use a different adaptation strategy by substituting a different delegate.
 
-    For example, suppose there exists a DirectoryBrowser that uses a Tree-Display. DirectoryBrowser might make a good delegate for adapting TreeDisplay to the hierarchical directory structure. In dynamically typed languages like Smalltalk or Objective C, this approach only requires an interface for registering the delegate with the adapter. Then TreeDisplay simply forwards the requests to the delegate. NEXTSTEP [Add94] uses this approach heavily to reduce subclassing.
+        For example, suppose there exists a DirectoryBrowser that uses a Tree-Display. DirectoryBrowser might make a good delegate for adapting TreeDisplay to the hierarchical directory structure. In dynamically typed languages like Smalltalk or Objective C, this approach only requires an interface for registering the delegate with the adapter. Then TreeDisplay simply forwards the requests to the delegate. NEXTSTEP [Add94] uses this approach heavily to reduce subclassing.
 
-    Statically typed languages like C++ require an explicit interface definition for the delegate. We can specify such an interface by putting the narrow interface that TreeDisplay requires into an abstract TreeAccessorDelegate class. Then we can mix this interface into the delegate of our choice—DirectoryBrowser in this case—using inheritance. We use single inheritance if the DirectoryBrowser has no existing parent class, multiple inheritance if it does. Mixing classes together like this is easier than introducing a new TreeDisplay subclass and implementing its operations individually.
+        Statically typed languages like C++ require an explicit interface definition for the delegate. We can specify such an interface by putting the narrow interface that TreeDisplay requires into an abstract TreeAccessorDelegate class. Then we can mix this interface into the delegate of our choice—DirectoryBrowser in this case—using inheritance. We use single inheritance if the DirectoryBrowser has no existing parent class, multiple inheritance if it does. Mixing classes together like this is easier than introducing a new TreeDisplay subclass and implementing its operations individually.
 
-    ```mermaid
+        ```mermaid
 
-    ```
+        ```
 
     3. *Parameterized adapters.* The usual way to support pluggable adapters in Smalltalk is to parameterize an adapter with one or more blocks. The block construct supports adaptation without subclassing. A block can adapt a request, and the adapter can store a block for each individual request. In our example, this means TreeDisplay stores one block for converting a node into a GraphicNode and another block for accessing a node’s children.
 
-    For example, to create TreeDisplay on a directory hierarchy, we write
+        For example, to create TreeDisplay on a directory hierarchy, we write
 
-    ```cpp
-    directoryDisplay :=
-        (TreeDisplay on: treeRoot)
-            getChildrenBlock:
-                [:node | node getSubdirectories]
-            createGraphicNodeBlock:
-                [:node | node createGraphicNode].
-    ```
+        ```cpp
+        directoryDisplay :=
+            (TreeDisplay on: treeRoot)
+                getChildrenBlock:
+                    [:node | node getSubdirectories]
+                createGraphicNodeBlock:
+                    [:node | node createGraphicNode].
+        ```
 
-    If you’re building interface adaptation into a class, this approach offers a convenient alternative to subclassing.
+        If you’re building interface adaptation into a class, this approach offers a convenient alternative to subclassing.
 
 ## Sample Code
 
