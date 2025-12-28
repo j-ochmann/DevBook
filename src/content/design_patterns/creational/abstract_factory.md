@@ -96,7 +96,7 @@ Use the Abstract Factory pattern when
 + a family of related product objects is designed to be used together, and you need to enforce this constraint.
 + you want to provide a class library of products, and you want to reveal just their interfaces, not their implementations.
 
-##Structure
+## Structure
 
 ```mermaid
 classDiagram
@@ -289,14 +289,14 @@ protected:
 }; 
 ```
 
+Now suppose we want to make a maze game in which a room can have a bomb set in it. If the bomb goes off, it will damage the walls (at least). We can make a subclass of Room keep track of whether the room has a bomb in it and whether the bomb has gone off. We’ll also need a subclass of Wall to keep track of the damage done to the wall. We’ll call these classes RoomWithABomb and BombedWall.
+
+The last class we’ll define is BombedMazeFactory, a subclass of MazeFactory that ensures walls are of class BombedWall and rooms are of class RoomWithABomb. BombedMazeFactory only needs to override two functions:
+
 ```cpp
 #define EnchantedMazeFactory_H
 #include "C++/MazeFactories.H"
 ```
-
-Now suppose we want to make a maze game in which a room can have a bomb set in it. If the bomb goes off, it will damage the walls (at least). We can make a subclass of Room keep track of whether the room has a bomb in it and whether the bomb has gone off. We’ll also need a subclass of Wall to keep track of the damage done to the wall. We’ll call these classes RoomWithABomb and BombedWall.
-
-The last class we’ll define is BombedMazeFactory, a subclass of MazeFactory that ensures walls are of class BombedWall and rooms are of class RoomWithABomb. BombedMazeFactory only needs to override two functions:
 
 ```cpp
 Wall* BombedMazeFactory::MakeWall () const {
