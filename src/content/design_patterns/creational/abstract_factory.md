@@ -102,38 +102,66 @@ Use the Abstract Factory pattern when
 classDiagram
     direction TD
 
+    class AbstractFactory {
+        <<abstract>>
+        +CreateProductA()*
+        +CreateProductB()*
+    }
+
+    %% Concrete Factories
+    class ConcreteFactory1 {
+        +CreateProductA()*
+        +CreateProductB()*
+    }
+
+    %% Concrete Factories
+    class ConcreteFactory2 {
+        +CreateProductA()*
+        +CreateProductB()*
+    }
+
+    %% Abstract Products
+    class AbstractProductA {
+        <<abstract>>
+    }
+
+    class AbstractProductB {
+        <<abstract>>
+    }
+
+    %% Concrete Products - Motif
+    class MotifWindow {
+    }
+    class MotifScrollBar {
+    }
+
+    %% Concrete Products - PM
+    class PMWindow {
+    }
+    class PMScrollBar {
+    }
+
+    %% Relationships
+    WidgetFactory <|-- MotifWidgetFactory
+    WidgetFactory <|-- PMWidgetFactory
+
+    Window <|-- MotifWindow
+    Window <|-- PMWindow
+
+    ScrollBar <|-- MotifScrollBar
+    ScrollBar <|-- PMScrollBar
+
+    MotifWidgetFactory ..> MotifWindow : creates
+    MotifWidgetFactory ..> MotifScrollBar : creates
+    PMWidgetFactory ..> PMWindow : creates
+    PMWidgetFactory ..> PMScrollBar : creates
+
+    %% Client
     class Client {
     }
-
-    class AbstractFactory {
-        <<interface>>
-        +createWindow()
-        +createScrollBar()
-    }
-    note for AbstractFactory "WidgetFactory"
-
-    class ConcreteFactory {
-        +createWindow()
-        +createScrollBar()
-    }
-    note for ConcreteFactory "MotifWidgetFactory, PMWidgetFactory"
-
-    class AbstractProduct {
-        <<interface>>
-    }
-    note for AbstractProduct "Window, ScrollBar"
-
-    class ConcreteProduct {
-    }
-    note for ConcreteProduct "MotifWindow, MotifScrollBar"
-
-    %% Vztahy
-    AbstractFactory <|-- ConcreteFactory
-    AbstractProduct <|-- ConcreteProduct
-    
-    Client --> AbstractFactory : uses
-    Client --> AbstractProduct : uses
-    ConcreteFactory ..> ConcreteProduct : creates
+    Client --> WidgetFactory
+    Client --> Window
+    Client --> ScrollBar
 ```
 
 ## Participants
