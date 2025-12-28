@@ -15,7 +15,7 @@ Convert the interface of a class into another interface clients expect. Adapter 
 
 Wrapper
 
-Motivation
+## Motivation
 
 Sometimes a toolkit class that’s designed for reuse isn’t reusable only because its interface doesn’t match the domain-specific interface an application requires.
 
