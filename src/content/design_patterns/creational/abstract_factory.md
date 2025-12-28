@@ -129,39 +129,27 @@ classDiagram
         <<abstract>>
     }
 
-    %% Concrete Products - Motif
-    class MotifWindow {
-    }
-    class MotifScrollBar {
-    }
-
-    %% Concrete Products - PM
-    class PMWindow {
-    }
-    class PMScrollBar {
-    }
-
     %% Relationships
-    WidgetFactory <|-- MotifWidgetFactory
-    WidgetFactory <|-- PMWidgetFactory
+    AbstractFactory <|-- ConcreteFactory1
+    AbstractFactory <|-- ConcreteFactory2
 
-    Window <|-- MotifWindow
-    Window <|-- PMWindow
+    ConcreteFactory1 <|-- ProductA1
+    ConcreteFactory1 <|-- ProductB1
 
-    ScrollBar <|-- MotifScrollBar
-    ScrollBar <|-- PMScrollBar
+    ConcreteFactory2 <|-- ProductA2
+    ConcreteFactory2 <|-- ProductB2
 
-    MotifWidgetFactory ..> MotifWindow : creates
-    MotifWidgetFactory ..> MotifScrollBar : creates
-    PMWidgetFactory ..> PMWindow : creates
-    PMWidgetFactory ..> PMScrollBar : creates
+    AbstractProductA ..> ProductA1 : creates
+    AbstractProductA ..> ProductA2 : creates
+    AbstractProductB ..> ProductB1 : creates
+    AbstractProductB ..> ProductB2 : creates
 
     %% Client
     class Client {
     }
-    Client --> WidgetFactory
-    Client --> Window
-    Client --> ScrollBar
+    Client --> AbstractFactory
+    Client --> ConcreteFactory1
+    Client --> ConcreteFactory2
 ```
 
 ## Participants
