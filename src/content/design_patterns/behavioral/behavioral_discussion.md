@@ -1,16 +1,21 @@
-Discussion of Behavioral Patterns
+---
+id: "behavioral_discussion"
+title: "Discussion of Behavioral Patterns"
+category: "Discussion of Behavioral Patterns"
+---
+# Discussion of Behavioral Patterns
 
 Encapsulating Variation
 
 Encapsulating variation is a theme of many behavioral patterns. When an aspect of a program changes frequently, these patterns define an object that encapsulates that aspect. Then other parts of the program can collaborate with the object whenever they depend on that aspect. The patterns usually define an abstract class that describes the encapsulating object, and the pattern derives its name from that object.12 For example,
 
-• a Strategy object encapsulates an algorithm (Strategy (315)),
++ a Strategy object encapsulates an algorithm (Strategy (315)),
 
-• a State object encapsulates a state-dependent behavior (State (305)),
++ a State object encapsulates a state-dependent behavior (State (305)),
 
-• a Mediator object encapsulates the protocol between objects (Mediator (273)), and
++ a Mediator object encapsulates the protocol between objects (Mediator (273)), and
 
-• an Iterator object encapsulates the way you access and traverse the components of an aggregate object (Iterator (257)).
++ an Iterator object encapsulates the way you access and traverse the components of an aggregate object (Iterator (257)).
 
 These patterns describe aspects of a program that are likely to change. Most patterns have two kinds of objects: the new object(s) that encapsulate the aspect, and the existing object(s) that use the new ones. Usually the functionality of new objects would be an integral part of the existing objects were it not for the pattern. For example, code for a Strategy would probably be wired into the strategy’s Context, and code for a State would be implemented directly in the state’s Context.
 
