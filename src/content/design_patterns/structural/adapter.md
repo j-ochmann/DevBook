@@ -116,7 +116,7 @@ Although the implementation of Adapter is usually straightforward, here are some
 
     The narrow interface leads to three implementation approaches:
 
-    1. *Using abstract operations.* Define corresponding abstract operations for the narrow Adaptee interface in the TreeDisplay class. Subclasses must implement the abstract operations and adapt the hierarchically structured object. For example, a DirectoryTreeDisplay subclass will implement these operations by accessing the directory structure.
+    a. *Using abstract operations.* Define corresponding abstract operations for the narrow Adaptee interface in the TreeDisplay class. Subclasses must implement the abstract operations and adapt the hierarchically structured object. For example, a DirectoryTreeDisplay subclass will implement these operations by accessing the directory structure.
 
         ```mermaid
 
@@ -124,7 +124,7 @@ Although the implementation of Adapter is usually straightforward, here are some
 
         DirectoryTreeDisplay specializes the narrow interface so that it can display directory structures made up of FileSystemEntity objects.
 
-    2. *Using delegate objects.* In this approach, TreeDisplay forwards requests for accessing the hierarchical structure to a delegate object. TreeDisplay can use a different adaptation strategy by substituting a different delegate.
+    b. *Using delegate objects.* In this approach, TreeDisplay forwards requests for accessing the hierarchical structure to a delegate object. TreeDisplay can use a different adaptation strategy by substituting a different delegate.
 
         For example, suppose there exists a DirectoryBrowser that uses a Tree-Display. DirectoryBrowser might make a good delegate for adapting TreeDisplay to the hierarchical directory structure. In dynamically typed languages like Smalltalk or Objective C, this approach only requires an interface for registering the delegate with the adapter. Then TreeDisplay simply forwards the requests to the delegate. NEXTSTEP [Add94] uses this approach heavily to reduce subclassing.
 
@@ -134,7 +134,7 @@ Although the implementation of Adapter is usually straightforward, here are some
 
         ```
 
-    3. *Parameterized adapters.* The usual way to support pluggable adapters in Smalltalk is to parameterize an adapter with one or more blocks. The block construct supports adaptation without subclassing. A block can adapt a request, and the adapter can store a block for each individual request. In our example, this means TreeDisplay stores one block for converting a node into a GraphicNode and another block for accessing a node’s children.
+    c. *Parameterized adapters.* The usual way to support pluggable adapters in Smalltalk is to parameterize an adapter with one or more blocks. The block construct supports adaptation without subclassing. A block can adapt a request, and the adapter can store a block for each individual request. In our example, this means TreeDisplay stores one block for converting a node into a GraphicNode and another block for accessing a node’s children.
 
         For example, to create TreeDisplay on a directory hierarchy, we write
 
