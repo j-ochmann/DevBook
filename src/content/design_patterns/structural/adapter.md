@@ -108,7 +108,7 @@ The solution involves a two-way class adapter ConstraintStateVariable, a subclas
 
 Although the implementation of Adapter is usually straightforward, here are some issues to keep in mind:
 
-1. *Implementing class adapters in C++.+ In a C++ implementation of a class adapter, Adapter would inherit publicly from Target and privately from Adaptee. Thus Adapter would be a subtype of Target but not of Adaptee.
+1. *Implementing class adapters in C++.* In a C++ implementation of a class adapter, Adapter would inherit publicly from Target and privately from Adaptee. Thus Adapter would be a subtype of Target but not of Adaptee.
 
 2. *Pluggable adapters.* Let’s look at three ways to implement pluggable adapters for the TreeDisplay widget described earlier, which can lay out and display a hierarchical structure automatically.
 
