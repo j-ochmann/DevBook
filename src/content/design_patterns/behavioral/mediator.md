@@ -1,10 +1,17 @@
-Object Behavioral: Mediator
+---
+id: "mediator"
+title: "Object Behavioral: Mediator"
+category: "Behavioral"
+goF: 17
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: Mediator
 
-Intent
+## Intent
 
 Define an object that encapsulates how a set of objects interact. Mediator promotes loose coupling by keeping objects from referring to each other explicitly, and it lets you vary their interaction independently.
 
-Motivation
+## Motivation
 
 Object-oriented design encourages the distribution of behavior among objects. Such distribution can result in an object structure with many connections between objects; in the worst case, every object ends up knowing about every other.
 
@@ -12,7 +19,9 @@ Though partitioning a system into many objects generally enhances reusability, p
 
 As an example, consider the implementation of dialog boxes in a graphical user interface. A dialog box uses a window to present a collection of widgets such as buttons, menus, and entry fields, as shown here:
 
-image
+```cpp
+
+```
 
 Often there are dependencies between the widgets in the dialog. For example, a button gets disabled when a certain entry field is empty. Selecting an entry in a list of choices called a list box might change the contents of an entry field. Conversely, typing text into the entry field might automatically select one or more corresponding entries in the list box. Once text appears in the entry field, other buttons may become enabled that let the user do something with the text, such as changing or deleting the thing to which it refers.
 
@@ -22,11 +31,15 @@ You can avoid these problems by encapsulating collective behavior in a separate 
 
 For example, FontDialogDirector can be the mediator between the widgets in a dialog box. A FontDialogDirector object knows the widgets in a dialog and coordinates their interaction. It acts as a hub of communication for widgets:
 
-image
+```cpp
+
+```
 
 The following interaction diagram illustrates how the objects cooperate to handle a change in a list box’s selection:
 
-image
+```cpp
+
+```
 
 Here’s the succession of events by which a list box’s selection passes to an entry field:
 
@@ -42,49 +55,43 @@ Note how the director mediates between the list box and the entry field. Widgets
 
 Here’s how the FontDialogDirector abstraction can be integrated into a class library:
 
-image
+```cpp
+
+```
 
 DialogDirector is an abstract class that defines the overall behavior of a dialog. Clients call the ShowDialog operation to display the dialog on the screen. CreateWidgets is an abstract operation for creating the widgets of a dialog. WidgetChanged is another abstract operation; widgets call it to inform their director that they have changed. DialogDirector subclasses override CreateWidgets to create the proper widgets, and they override WidgetChanged to handle the changes.
 
 Applicability
 
 Use the Mediator pattern when
-
-• a set of objects communicate in well-defined but complex ways. The resulting interdependencies are unstructured and difficult to understand.
-
-• reusing an object is difficult because it refers to and communicates with many other objects.
-
-• a behavior that’s distributed between several classes should be customizable without a lot of subclassing.
++ a set of objects communicate in well-defined but complex ways. The resulting interdependencies are unstructured and difficult to understand.
++ reusing an object is difficult because it refers to and communicates with many other objects.
++ a behavior that’s distributed between several classes should be customizable without a lot of subclassing.
 
 Structure
 
-image
+```cpp
+
+```
 
 A typical object structure might look like this:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Mediator (DialogDirector)
-
-– defines an interface for communicating with Colleague objects.
-
-• ConcreteMediator (FontDialogDirector)
-
-– implements cooperative behavior by coordinating Colleague objects.
-
-– knows and maintains its colleagues.
-
-• Colleague classes (ListBox, EntryField)
-
-– each Colleague class knows its Mediator object.
-
-– each colleague communicates with its mediator whenever it would have otherwise communicated with another colleague.
++ Mediator (DialogDirector)
+- defines an interface for communicating with Colleague objects.
++ ConcreteMediator (FontDialogDirector)
+- implements cooperative behavior by coordinating Colleague objects.
+- knows and maintains its colleagues.
++ Colleague classes (ListBox, EntryField)
+- each Colleague class knows its Mediator object.
+- each colleague communicates with its mediator whenever it would have otherwise communicated with another colleague.
 
 Collaborations
-
-• Colleagues send and receive requests from a Mediator object. The mediator implements the cooperative behavior by routing requests between the appropriate colleague(s).
++ Colleagues send and receive requests from a Mediator object. The mediator implements the cooperative behavior by routing requests between the appropriate colleague(s).
 
 Consequences
 
@@ -114,37 +121,53 @@ Sample Code
 
 We’ll use a DialogDirector to implement the font dialog box shown in the Motivation. The abstract class DialogDirector defines the interface for directors.
 
-image
+```cpp
+
+```
 
 Widget is the abstract base class for widgets. A widget knows its director.
 
-image
+```cpp
+
+```
 
 Changed calls the director’s WidgetChanged operation. Widgets call WidgetChanged on their director to inform it of a significant event.
 
-image
+```cpp
+
+```
 
 Subclasses of DialogDirector override WidgetChanged to affect the appropriate widgets. The widget passes a reference to itself as an argument to WidgetChanged to let the director identify the widget that changed. DialogDirector subclasses redefine the CreateWidgets pure virtual to construct the widgets in the dialog.
 
 The ListBox, EntryField, and Button are subclasses of Widget for specialized user interface elements. ListBox provides a GetSelection operation to get the current selection, and EntryField’s SetText operation puts new text into the field.
 
-image
+```cpp
+
+```
 
 Button is a simple widget that calls Changed whenever it’s pressed. This gets done in its implementation of HandleMouse:
 
-image
+```cpp
+
+```
 
 The FontDialogDirector class mediates between widgets in the dialog box. FontDialogDirector is a subclass of DialogDirector:
 
-image
+```cpp
+
+```
 
 FontDialogDirector keeps track of the widgets it displays. It redefines CreateWidgets to create the widgets and initialize its references to them:
 
-image
+```cpp
+
+```
 
 WidgetChanged ensures that the widgets work together properly:
 
-image
+```cpp
+
+```
 
 The complexity of WidgetChanged increases proportionally with the complexity of the dialog. Large dialogs are undesirable for other reasons, of course, but mediator complexity might mitigate the pattern’s benefits in other applications.
 
@@ -156,13 +179,17 @@ The application architecture of Smalltalk/V for Windows is based on a mediator s
 
 The following object diagram shows a snapshot of an application at run-time:
 
-image
+```cpp
+
+```
 
 Smalltalk/V uses an event mechanism for Pane-ViewManager communication. A pane generates an event when it wants to get information from the mediator or when it wants to inform the mediator that something significant happened. An event defines a symbol (e.g., #select) that identifies the event. To handle the event, the view manager registers a method selector with the pane. This selector is the event’s handler; it will be invoked whenever the event occurs.
 
 The following code excerpt shows how a ListPane object gets created inside a ViewManager subclass and how ViewManager registers an event handler for the #select event:
 
-image
+```cpp
+
+```
 
 Another application of the Mediator pattern is in coordinating complex updates. An example is the ChangeManager class mentioned in Observer (293). Change-Manager mediates between subjects and observers to avoid redundant updates. When an object changes, it notifies the ChangeManager, which in turn coordinates the update by notifying the object’s dependents.
 

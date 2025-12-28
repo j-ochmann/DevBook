@@ -1,10 +1,17 @@
-Class, Object Structural: Adapter
+---
+id: "adapter"
+title: "Class, Object Structural: Adapter"
+category: "Structural"
+goF: 6
+tags: ["cpp", "java", "python"]
+---
+# Class, Object Structural: Adapter
 
-Intent
+## Intent
 
 Convert the interface of a class into another interface clients expect. Adapter lets classes work together that couldn’t otherwise because of incompatible interfaces.
 
-Also Known As
+## Also Known As
 
 Wrapper
 
@@ -20,7 +27,9 @@ How can existing and unrelated classes like TextView work in an application that
 
 Instead, we could define TextShape so that it adapts the TextView interface to Shape’s. We can do this in one of two ways: (1) by inheriting Shape’s interface and TextView’s implementation or (2) by composing a TextView instance within a TextShape and implementing TextShape in terms of TextView’s interface. These two approaches correspond to the class and object versions of the Adapter pattern. We call TextShape an adapter.
 
-image
+```cpp
+
+```
 
 This diagram illustrates the object adapter case. It shows how BoundingBox requests, declared in class Shape, are converted to GetExtent requests defined in TextView. Since TextShape adapts TextView to the Shape interface, the drawing editor can reuse the otherwise incompatible TextView class.
 
@@ -31,60 +40,47 @@ Manipulator is an abstract class for objects that know how to animate a Shape in
 Applicability
 
 Use the Adapter pattern when
-
-• you want to use an existing class, and its interface does not match the one you need.
-
-• you want to create a reusable class that cooperates with unrelated or unforeseen classes, that is, classes that don’t necessarily have compatible interfaces.
-
-• (object adapter only) you need to use several existing subclasses, but it’s impractical to adapt their interface by subclassing every one. An object adapter can adapt the interface of its parent class.
++ you want to use an existing class, and its interface does not match the one you need.
++ you want to create a reusable class that cooperates with unrelated or unforeseen classes, that is, classes that don’t necessarily have compatible interfaces.
++ (object adapter only) you need to use several existing subclasses, but it’s impractical to adapt their interface by subclassing every one. An object adapter can adapt the interface of its parent class.
 
 Structure
 
 A class adapter uses multiple inheritance to adapt one interface to another:
 
-image
+```cpp
+
+```
 
 An object adapter relies on object composition:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Target (Shape)
-
-– defines the domain-specific interface that Client uses.
-
-• Client (DrawingEditor)
-
-– collaborates with objects conforming to the Target interface.
-
-• Adaptee (TextView)
-
-– defines an existing interface that needs adapting.
-
-• Adapter (TextShape)
-
-– adapts the interface of Adaptee to the Target interface.
++ Target (Shape)
+- defines the domain-specific interface that Client uses.
++ Client (DrawingEditor)
+- collaborates with objects conforming to the Target interface.
++ Adaptee (TextView)
+- defines an existing interface that needs adapting.
++ Adapter (TextShape)
+- adapts the interface of Adaptee to the Target interface.
 
 Collaborations
-
-• Clients call operations on an Adapter instance. In turn, the adapter calls Adaptee operations that carry out the request.
++ Clients call operations on an Adapter instance. In turn, the adapter calls Adaptee operations that carry out the request.
 
 Consequences
 
 Class and object adapters have different trade-offs. A class adapter
-
-• adapts Adaptee to Target by committing to a concrete Adaptee class. As a consequence, a class adapter won’t work when we want to adapt a class and all its subclasses.
-
-• lets Adapter override some of Adaptee’s behavior, since Adapter is a subclass of Adaptee.
-
-• introduces only one object, and no additional pointer indirection is needed to get to the adaptee.
++ adapts Adaptee to Target by committing to a concrete Adaptee class. As a consequence, a class adapter won’t work when we want to adapt a class and all its subclasses.
++ lets Adapter override some of Adaptee’s behavior, since Adapter is a subclass of Adaptee.
++ introduces only one object, and no additional pointer indirection is needed to get to the adaptee.
 
 An object adapter
-
-• lets a single Adapter work with many Adaptees—that is, the Adaptee itself and all of its subclasses (if any). The Adapter can also add functionality to all Adaptees at once.
-
-• makes it harder to override Adaptee behavior. It will require subclassing Adaptee and making Adapter refer to the subclass rather than the Adaptee itself.
++ lets a single Adapter work with many Adaptees—that is, the Adaptee itself and all of its subclasses (if any). The Adapter can also add functionality to all Adaptees at once.
++ makes it harder to override Adaptee behavior. It will require subclassing Adaptee and making Adapter refer to the subclass rather than the Adaptee itself.
 
 Here are other issues to consider when using the Adapter pattern:
 
@@ -102,7 +98,9 @@ We’ll look at different ways to build interface adaptation into classes in the
 
 Consider the two-way adapter that integrates Unidraw, a graphical editor framework [VL90], and QOCA, a constraint-solving toolkit [HHMV92]. Both systems have classes that represent variables explicitly: Unidraw has State Variable, and QOCA has ConstraintVariable. To make Unidraw work with QOCA, ConstraintVariable must be adapted to State Variable; to let QOCA propagate solutions to Unidraw, State Variable must be adapted to ConstraintVariable.
 
-image
+```cpp
+
+```
 
 The solution involves a two-way class adapter ConstraintStateVariable, a subclass of both State Variable and ConstraintVariable, that adapts the two interfaces to each other. Multiple inheritance is a viable solution in this case because the interfaces of the adapted classes are substantially different. The two-way class adapter conforms to both of the adapted classes and can work in either system.
 
@@ -120,7 +118,9 @@ The narrow interface leads to three implementation approaches:
 
 (a) Using abstract operations. Define corresponding abstract operations for the narrow Adaptee interface in the TreeDisplay class. Subclasses must implement the abstract operations and adapt the hierarchically structured object. For example, a DirectoryTreeDisplay subclass will implement these operations by accessing the directory structure.
 
-image
+```cpp
+
+```
 
 DirectoryTreeDisplay specializes the narrow interface so that it can display directory structures made up of FileSystemEntity objects.
 
@@ -130,13 +130,17 @@ For example, suppose there exists a DirectoryBrowser that uses a Tree-Display. D
 
 Statically typed languages like C++ require an explicit interface definition for the delegate. We can specify such an interface by putting the narrow interface that TreeDisplay requires into an abstract TreeAccessorDelegate class. Then we can mix this interface into the delegate of our choice—DirectoryBrowser in this case—using inheritance. We use single inheritance if the DirectoryBrowser has no existing parent class, multiple inheritance if it does. Mixing classes together like this is easier than introducing a new TreeDisplay subclass and implementing its operations individually.
 
-image
+```cpp
+
+```
 
 (c) Parameterized adapters. The usual way to support pluggable adapters in Smalltalk is to parameterize an adapter with one or more blocks. The block construct supports adaptation without subclassing. A block can adapt a request, and the adapter can store a block for each individual request. In our example, this means TreeDisplay stores one block for converting a node into a GraphicNode and another block for accessing a node’s children.
 
 For example, to create TreeDisplay on a directory hierarchy, we write
 
-image
+```cpp
+
+```
 
 If you’re building interface adaptation into a class, this approach offers a convenient alternative to subclassing.
 
@@ -144,37 +148,53 @@ Sample Code
 
 We’ll give a brief sketch of the implementation of class and object adapters for the Motivation example beginning with the classes Shape and TextView.
 
-image
+```cpp
+
+```
 
 Shape assumes a bounding box defined by its opposing corners. In contrast, TextView is defined by an origin, height, and width. Shape also defines a CreateManipulator operation for creating a Manipulator object, which knows how to animate a shape when the user manipulates it.1 TextView has no equivalent operation. The class TextShape is an adapter between these different interfaces.
 
 A class adapter uses multiple inheritance to adapt interfaces. The key to class adapters is to use one inheritance branch to inherit the interface and another branch to inherit the implementation. The usual way to make this distinction in C++ is to inherit the interface publicly and inherit the implementation privately. We’ll use this convention to define the TextShape adapter.
 
-image
+```cpp
+
+```
 
 The BoundingBox operation converts TextView’s interface to conform to Shape’s.
 
-image
+```cpp
+
+```
 
 The IsEmpty operation demonstrates the direct forwarding of requests common in adapter implementations:
 
-image
+```cpp
+
+```
 
 Finally, we define CreateManipulator (which isn’t supported by TextView) from scratch. Assume we’ve already implemented a TextManipulator class that supports manipulation of a TextShape.
 
-image
+```cpp
+
+```
 
 The object adapter uses object composition to combine classes with different interfaces. In this approach, the adapter TextShape maintains a pointer to TextView.
 
-image
+```cpp
+
+```
 
 TextShape must initialize the pointer to the TextView instance, and it does so in the constructor. It must also call operations on its TextView object whenever its own operations are called. In this example, assume that the client creates the TextView object and passes it to the TextShape constructor:
 
-image
+```cpp
+
+```
 
 CreateManipulator’s implementation doesn’t change from the class adapter version, since it’s implemented from scratch and doesn’t reuse any existing TextView functionality.
 
-image
+```cpp
+
+```
 
 Compare this code to the class adapter case. The object adapter requires a little more effort to write, but it’s more flexible. For example, the object adapter version of TextShape will work equally well with subclasses of TextView—the client simply passes an instance of a TextView subclass to the TextShape constructor.
 
@@ -190,7 +210,9 @@ Pluggable adapters are common in ObjectWorks\Smalltalk [Par90]. Standard Smallta
 
 Instead, ObjectWorks\Smalltalk includes a subclass of ValueModel called PluggableAdaptor. A PluggableAdaptor object adapts other objects to the ValueModel interface (value, value:). It can be parameterized with blocks for getting and setting the desired value. PluggableAdaptor uses these blocks internally to implement the value, value: interface. PluggableAdaptor also lets you pass in the selector names (e.g., width, width:) directly for syntactic convenience. It converts these selectors into the corresponding blocks automatically.
 
-image
+```cpp
+
+```
 
 Another example from ObjectWorks\Smalltalk is the TableAdaptor class. A TableAdaptor can adapt a sequence of objects to a tabular presentation. The table displays one object per row. The client parameterizes TableAdaptor with the set of messages that a table can use to get the column values from an object.
 

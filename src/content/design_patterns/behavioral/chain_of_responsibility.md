@@ -1,10 +1,17 @@
-Object Behavioral: Chain of Responsibility
+---
+id: "chain_of_responsibility"
+title: "Object Behavioral: Chain of Responsibility"
+category: "Behavioral"
+goF: 13
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: Chain of Responsibility
 
-Intent
+## Intent
 
 Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the request along the chain until an object handles it.
 
-Motivation
+## Motivation
 
 Consider a context-sensitive help facility for a graphical user interface. The user can obtain help information on any part of the interface just by clicking on it. The help that’s provided depends on the part of the interface that’s selected and its context; for example, a button widget in a dialog box might have different help information than a similar button in the main window. If no specific help information exists for that part of the interface, then the help system should display a more general help message about the immediate context—the dialog box as a whole, for example.
 
@@ -14,63 +21,60 @@ The problem here is that the object that ultimately provides the help isn’t kn
 
 The idea of this pattern is to decouple senders and receivers by giving multiple objects a chance to handle a request. The request gets passed along a chain of objects until one of them handles it.
 
-image
+```cpp
+
+```
 
 The first object in the chain receives the request and either handles it or forwards it to the next candidate on the chain, which does likewise. The object that made the request has no explicit knowledge of who will handle it—we say the request has an implicit receiver.
 
 Let’s assume the user clicks for help on a button widget marked “Print.” The button is contained in an instance of PrintDialog, which knows the application object it belongs to (see preceding object diagram). The following interaction diagram illustrates how the help request gets forwarded along the chain:
 
-image
+```cpp
+
+```
 
 In this case, neither aPrintButton nor aPrintDialog handles the request; it stops at anApplication, which can handle it or ignore it. The client that issued the request has no direct reference to the object that ultimately fulfills it.
 
 To forward the request along the chain, and to ensure receivers remain implicit, each object on the chain shares a common interface for handling requests and for accessing its successor on the chain. For example, the help system might define a HelpHandler class with a corresponding HandleHelp operation. HelpHandler can be the parent class for candidate object classes, or it can be defined as a mixin class. Then classes that want to handle help requests can make HelpHandler a parent:
 
-image
+```cpp
+
+```
 
 The Button, Dialog, and Application classes use HelpHandler operations to handle help requests. HelpHandler’s HandleHelp operation forwards the request to the successor by default. Subclasses can override this operation to provide help under the right circumstances; otherwise they can use the default implementation to forward the request.
 
 Applicability
 
 Use Chain of Responsibility when
-
-• more than one object may handle a request, and the handler isn’t known a priori. The handler should be ascertained automatically.
-
-• you want to issue a request to one of several objects without specifying the receiver explicitly.
-
-• the set of objects that can handle a request should be specified dynamically.
++ more than one object may handle a request, and the handler isn’t known a priori. The handler should be ascertained automatically.
++ you want to issue a request to one of several objects without specifying the receiver explicitly.
++ the set of objects that can handle a request should be specified dynamically.
 
 Structure
 
-image
+```cpp
+
+```
 
 A typical object structure might look like this:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Handler (HelpHandler)
-
-– defines an interface for handling requests.
-
-– (optional) implements the successor link.
-
-• ConcreteHandler (PrintButton, PrintDialog)
-
-– handles requests it is responsible for.
-
-– can access its successor.
-
-– if the ConcreteHandler can handle the request, it does so; otherwise it forwards the request to its successor.
-
-• Client
-
-– initiates the request to a ConcreteHandler object on the chain.
++ Handler (HelpHandler)
+- defines an interface for handling requests.
+- (optional) implements the successor link.
++ ConcreteHandler (PrintButton, PrintDialog)
+- handles requests it is responsible for.
+- can access its successor.
+- if the ConcreteHandler can handle the request, it does so; otherwise it forwards the request to its successor.
++ Client
+- initiates the request to a ConcreteHandler object on the chain.
 
 Collaborations
-
-• When a client issues a request, the request propagates along the chain until a ConcreteHandler object takes responsibility for handling it.
++ When a client issues a request, the request propagates along the chain until a ConcreteHandler object takes responsibility for handling it.
 
 Consequences
 
@@ -102,7 +106,9 @@ Using existing links works well when the links support the chain you need. It sa
 
 Here’s a HelpHandler base class that maintains a successor link:
 
-image
+```cpp
+
+```
 
 3. Representing requests. Different options are available for representing requests. In the simplest form, the request is a hard-coded operation invocation, as in the case of HandleHelp. This is convenient and safe, but you can forward only the fixed set of requests that the Handler class defines.
 
@@ -116,11 +122,15 @@ To identify the request, Request can define an accessor function that returns an
 
 Here is a sketch of a dispatch function that uses request objects to identify requests. A GetKind operation defined in the base Request class identifies the kind of request:
 
-image
+```cpp
+
+```
 
 Subclasses can extend the dispatch by overriding HandleRequest. The subclass handles only the requests in which it’s interested; other requests are forwarded to the parent class. In this way, subclasses effectively extend (rather than override) the HandleRequest operation. For example, here’s how an ExtendedHandler subclass extends Handler’s version of HandleRequest:
 
-image
+```cpp
+
+```
 
 4. Automatic forwarding in Smalltalk. You can use the doesNotUnderstand mechanism in Smalltalk to forward requests. Messages that have no corresponding methods are trapped in the implementation of doesNotUnderstand, which can be overridden to forward the message to an object’s successor. Thus it isn’t necessary to implement forwarding manually; the class handles only the request in which it’s interested, and it relies on doesNotUnderstand to forward all others.
 
@@ -130,31 +140,45 @@ The following example illustrates how a chain of responsibility can handle reque
 
 The HelpHandler class defines the interface for handling help requests. It maintains a help topic (which is empty by default) and keeps a reference to its successor on the chain of help handlers. The key operation is HandleHelp, which subclasses override. HasHelp is a convenience operation for checking whether there is an associated help topic.
 
-image
+```cpp
+
+```
 
 All widgets are subclasses of the Widget abstract class. Widget is a subclass of HelpHandler, since all user interface elements can have help associated with them. (We could have used a mixin-based implementation just as well.)
 
-image
+```cpp
+
+```
 
 In our example, a button is the first handler on the chain. The Button class is a subclass of Widget. The Button constructor takes two parameters: a reference to its enclosing widget and the help topic.
 
-image
+```cpp
+
+```
 
 Button’s version of HandleHelp first tests to see if there is a help topic for buttons. If the developer hasn’t defined one, then the request gets forwarded to the successor using the HandleHelp operation in HelpHandler. If there is a help topic, then the button displays it, and the search ends.
 
-image
+```cpp
+
+```
 
 Dialog implements a similar scheme, except that its successor is not a widget but any help handler. In our application this successor will be an instance of Application.
 
-image
+```cpp
+
+```
 
 At the end of the chain is an instance of Application. The application is not a widget, so Application is subclassed directly from HelpHandler. When a help request propagates to this level, the application can supply information on the application in general, or it can offer a list of different help topics:
 
-image
+```cpp
+
+```
 
 The following code creates and connects these objects. Here the dialog concerns printing, and so the objects have printing-related topics assigned.
 
-image
+```cpp
+
+```
 
 We can invoke the help request by calling HandleHelp on any object on the chain. To start the search at the button object, just call HandleHelp on it:
 

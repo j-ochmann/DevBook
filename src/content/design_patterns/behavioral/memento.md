@@ -1,26 +1,37 @@
-Object Behavioral: Memento
+---
+id: "memento"
+title: "Object Behavioral: Memento"
+category: "Behavioral"
+goF: 18
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: Memento
 
-Intent
+## Intent
 
 Without violating encapsulation, capture and externalize an object’s internal state so that the object can be restored to this state later.
 
-Also Known As
+## Also Known As
 
 Token
 
-Motivation
+## Motivation
 
 Sometimes it’s necessary to record the internal state of an object. This is required when implementing checkpoints and undo mechanisms that let users back out of tentative operations or recover from errors. You must save state information somewhere so that you can restore objects to their previous states. But objects normally encapsulate some or all of their state, making it inaccessible to other objects and impossible to save externally. Exposing this state would violate encapsulation, which can compromise the application’s reliability and extensibility.
 
 Consider for example a graphical editor that supports connectivity between objects. A user can connect two rectangles with a line, and the rectangles stay connected when the user moves either of them. The editor ensures that the line stretches to maintain the connection.
 
-image
+```cpp
+
+```
 
 A well-known way to maintain connectivity relationships between objects is with a constraint-solving system. We can encapsulate this functionality in a ConstraintSolver object. ConstraintSolver records connections as they are made and generates mathematical equations that describe them. It solves these equations whenever the user makes a connection or otherwise modifies the diagram. Constraint-Solver uses the results of its calculations to rearrange the graphics so that they maintain the proper connections.
 
 Supporting undo in this application isn’t as easy as it may seem. An obvious way to undo a move operation is to store the original distance moved and move the object back an equivalent distance. However, this does not guarantee all objects will appear where they did before. Suppose there is some slack in the connection. In that case, simply moving the rectangle back to its original location won’t necessarily achieve the desired effect.
 
-image
+```cpp
+
+```
 
 In general, the ConstraintSolver’s public interface might be insufficient to allow precise reversal of its effects on other objects. The undo mechanism must work more closely with ConstraintSolver to reestablish previous state, but we should also avoid exposing the ConstraintSolver’s internals to the undo mechanism.
 
@@ -41,44 +52,35 @@ This arrangement lets the ConstraintSolver entrust other objects with the inform
 Applicability
 
 Use the Memento pattern when
-
-• a snapshot of (some portion of) an object’s state must be saved so that it can be restored to that state later, and
-
-• a direct interface to obtaining the state would expose implementation details and break the object’s encapsulation.
++ a snapshot of (some portion of) an object’s state must be saved so that it can be restored to that state later, and
++ a direct interface to obtaining the state would expose implementation details and break the object’s encapsulation.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Memento (SolverState)
-
-– stores internal state of the Originator object. The memento may store as much or as little of the originator’s internal state as necessary at its originator’s discretion.
-
-– protects against access by objects other than the originator. Mementos have effectively two interfaces. Caretaker sees a narrow interface to the Memento—it can only pass the memento to other objects. Originator, in contrast, sees a wide interface, one that lets it access all the data necessary to restore itself to its previous state. Ideally, only the originator that produced the memento would be permitted to access the memento’s internal state.
-
-• Originator (ConstraintSolver)
-
-– creates a memento containing a snapshot of its current internal state.
-
-– uses the memento to restore its internal state.
-
-• Caretaker (undo mechanism)
-
-– is responsible for the memento’s safekeeping.
-
-– never operates on or examines the contents of a memento.
++ Memento (SolverState)
+- stores internal state of the Originator object. The memento may store as much or as little of the originator’s internal state as necessary at its originator’s discretion.
+- protects against access by objects other than the originator. Mementos have effectively two interfaces. Caretaker sees a narrow interface to the Memento—it can only pass the memento to other objects. Originator, in contrast, sees a wide interface, one that lets it access all the data necessary to restore itself to its previous state. Ideally, only the originator that produced the memento would be permitted to access the memento’s internal state.
++ Originator (ConstraintSolver)
+- creates a memento containing a snapshot of its current internal state.
+- uses the memento to restore its internal state.
++ Caretaker (undo mechanism)
+- is responsible for the memento’s safekeeping.
+- never operates on or examines the contents of a memento.
 
 Collaborations
++ A caretaker requests a memento from an originator, holds it for a time, and passes it back to the originator, as the following interaction diagram illustrates:
 
-• A caretaker requests a memento from an originator, holds it for a time, and passes it back to the originator, as the following interaction diagram illustrates:
+```cpp
 
-image
+```
 
 Sometimes the caretaker won’t pass the memento back to the originator, because the originator might never need to revert to an earlier state.
-
-• Mementos are passive. Only the originator that created a memento will assign or retrieve its state.
++ Mementos are passive. Only the originator that created a memento will assign or retrieve its state.
 
 Consequences
 
@@ -100,7 +102,9 @@ Here are two issues to consider when implementing the Memento pattern:
 
 1. Language support. Mementos have two interfaces: a wide one for originators and a narrow one for other objects. Ideally the implementation language will support two levels of static protection. C++ lets you do this by making the Originator a friend of Memento and making Memento’s wide interface private. Only the narrow interface should be declared public. For example:
 
-image
+```cpp
+
+```
 
 2. Storing incremental changes. When mementos get created and passed back to their originator in a predictable sequence, then Memento can save just the incremental change to the originator’s internal state.
 
@@ -110,15 +114,21 @@ Sample Code
 
 The C++ code given here illustrates the ConstraintSolver example discussed earlier. We use MoveCommand objects (see Command (233)) to (un)do the translation of a graphical object from one position to another. The graphical editor calls the command’s Execute operation to move a graphical object and Unexecute to undo the move. The command stores its target, the distance moved, and an instance of ConstraintSolverMemento, a memento containing state from the constraint solver.
 
-image
+```cpp
+
+```
 
 The connection constraints are established by the class ConstraintSolver. Its key member function is Solve, which solves the constraints registered with the AddConstraint operation. To support undo, ConstraintSolver’s state can be externalized with CreateMemento into a ConstraintSolverMemento instance. The constraint solver can be returned to a previous state by calling SetMemento. ConstraintSolver is a Singleton (127).
 
-image
+```cpp
+
+```
 
 Given these interfaces, we can implement MoveCommand members Execute and Unexecute as follows:
 
-image
+```cpp
+
+```
 
 Execute acquires a ConstraintSolverMemento memento before it moves the graphic. Unexecute moves the graphic back, sets the constraint solver’s state to the previous state, and finally tells the constraint solver to solve the constraints.
 
@@ -128,13 +138,17 @@ The preceding sample code is based on Unidraw’s support for connectivity throu
 
 Collections in Dylan [App92] provide an iteration interface that reflects the Memento pattern. Dylan’s collections have the notion of a “state” object, which is a memento that represents the state of the iteration. Each collection can represent the current state of the iteration in any way it chooses; the representation is completely hidden from clients. The Dylan iteration approach might be translated to C++ as follows:
 
-image
+```cpp
+
+```
 
 CreatelnitialState returns an initialized IterationState object for the collection. Next advances the state object to the next position in the iteration; it effectively increments the iteration index. IsDone returns true if Next has advanced beyond the last element in the collection. CurrentItem dereferences the state object and returns the element in the collection to which it refers. Copy returns a copy of the given state object. This is useful for marking a point in an iteration.
 
 Given a class ItemType, we can iterate over a collection of its instances as follows7:
 
-image
+```cpp
+
+```
 
 The memento-based iteration interface has two interesting benefits:
 

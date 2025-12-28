@@ -1,76 +1,67 @@
-Object Behavioral: Strategy
+---
+id: "strategy"
+title: "Object Behavioral: Strategy"
+category: "Behavioral"
+goF: 21
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: Strategy
 
-Intent
+## Intent
 
 Define a family of algorithms, encapsulate each one, and make them interchangeable. Strategy lets the algorithm vary independently from clients that use it.
 
-Also Known As
+## Also Known As
 
 Policy
 
-Motivation
+## Motivation
 
 Many algorithms exist for breaking a stream of text into lines. Hard-wiring all such algorithms into the classes that require them isn’t desirable for several reasons:
-
-• Clients that need linebreaking get more complex if they include the line-breaking code. That makes clients bigger and harder to maintain, especially if they support multiple linebreaking algorithms.
-
-• Different algorithms will be appropriate at different times. We don’t want to support multiple linebreaking algorithms if we don’t use them all.
-
-• It’s difficult to add new algorithms and vary existing ones when linebreaking is an integral part of a client.
++ Clients that need linebreaking get more complex if they include the line-breaking code. That makes clients bigger and harder to maintain, especially if they support multiple linebreaking algorithms.
++ Different algorithms will be appropriate at different times. We don’t want to support multiple linebreaking algorithms if we don’t use them all.
++ It’s difficult to add new algorithms and vary existing ones when linebreaking is an integral part of a client.
 
 We can avoid these problems by defining classes that encapsulate different line-breaking algorithms. An algorithm that’s encapsulated in this way is called a strategy.
 
-image
+```cpp
+
+```
 
 Suppose a Composition class is responsible for maintaining and updating the linebreaks of text displayed in a text viewer. Linebreaking strategies aren’t implemented by the class Composition. Instead, they are implemented separately by subclasses of the abstract Compositor class. Compositor subclasses implement different strategies:
-
-• SimpleCompositor implements a simple strategy that determines linebreaks one at a time.
-
-• TeXCompositor implements the TEX algorithm for finding linebreaks. This strategy tries to optimize linebreaks globally, that is, one paragraph at a time.
-
-• ArrayCompositor implements a strategy that selects breaks so that each row has a fixed number of items. It’s useful for breaking a collection of icons into rows, for example.
++ SimpleCompositor implements a simple strategy that determines linebreaks one at a time.
++ TeXCompositor implements the TEX algorithm for finding linebreaks. This strategy tries to optimize linebreaks globally, that is, one paragraph at a time.
++ ArrayCompositor implements a strategy that selects breaks so that each row has a fixed number of items. It’s useful for breaking a collection of icons into rows, for example.
 
 A Composition maintains a reference to a Compositor object. Whenever a Composition reformats its text, it forwards this responsibility to its Compositor object. The client of Composition specifies which Compositor should be used by installing the Compositor it desires into the Composition.
 
 Applicability
 
 Use the Strategy pattern when
-
-• many related classes differ only in their behavior. Strategies provide a way to configure a class with one of many behaviors.
-
-• you need different variants of an algorithm. For example, you might define algorithms reflecting different space/time trade-offs. Strategies can be used when these variants are implemented as a class hierarchy of algorithms [HO87].
-
-• an algorithm uses data that clients shouldn’t know about. Use the Strategy pattern to avoid exposing complex, algorithm-specific data structures.
-
-• a class defines many behaviors, and these appear as multiple conditional statements in its operations. Instead of many conditionals, move related conditional branches into their own Strategy class.
++ many related classes differ only in their behavior. Strategies provide a way to configure a class with one of many behaviors.
++ you need different variants of an algorithm. For example, you might define algorithms reflecting different space/time trade-offs. Strategies can be used when these variants are implemented as a class hierarchy of algorithms [HO87].
++ an algorithm uses data that clients shouldn’t know about. Use the Strategy pattern to avoid exposing complex, algorithm-specific data structures.
++ a class defines many behaviors, and these appear as multiple conditional statements in its operations. Instead of many conditionals, move related conditional branches into their own Strategy class.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Strategy (Compositor)
-
-– declares an interface common to all supported algorithms. Context uses this interface to call the algorithm defined by a ConcreteStrategy.
-
-• ConcreteStrategy (SimpleCompositor, TeXCompositor, ArrayCompositor)
-
-– implements the algorithm using the Strategy interface.
-
-• Context (Composition)
-
-– is configured with a ConcreteStrategy object.
-
-– maintains a reference to a Strategy object.
-
-– may define an interface that lets Strategy access its data.
++ Strategy (Compositor)
+- declares an interface common to all supported algorithms. Context uses this interface to call the algorithm defined by a ConcreteStrategy.
++ ConcreteStrategy (SimpleCompositor, TeXCompositor, ArrayCompositor)
+- implements the algorithm using the Strategy interface.
++ Context (Composition)
+- is configured with a ConcreteStrategy object.
+- maintains a reference to a Strategy object.
+- may define an interface that lets Strategy access its data.
 
 Collaborations
-
-• Strategy and Context interact to implement the chosen algorithm. A context may pass all data required by the algorithm to the strategy when the algorithm is called. Alternatively, the context can pass itself as an argument to Strategy operations. That lets the strategy call back on the context as required.
-
-• A context forwards requests from its clients to its strategy. Clients usually create and pass a ConcreteStrategy object to the context; thereafter, clients interact with the context exclusively. There is often a family of ConcreteStrategy classes for a client to choose from.
++ Strategy and Context interact to implement the chosen algorithm. A context may pass all data required by the algorithm to the strategy when the algorithm is called. Alternatively, the context can pass itself as an argument to Strategy operations. That lets the strategy call back on the context as required.
++ A context forwards requests from its clients to its strategy. Clients usually create and pass a ConcreteStrategy object to the context; thereafter, clients interact with the context exclusively. There is often a family of ConcreteStrategy classes for a client to choose from.
 
 Consequences
 
@@ -84,11 +75,15 @@ The Strategy pattern has the following benefits and drawbacks:
 
 For example, without strategies, the code for breaking text into lines could look like
 
-image
+```cpp
+
+```
 
 The Strategy pattern eliminates this case statement by delegating the line-breaking task to a Strategy object:
 
-image
+```cpp
+
+```
 
 Code containing many conditional statements often indicates the need to apply the Strategy pattern.
 
@@ -114,11 +109,15 @@ The needs of the particular algorithm and its data requirements will determine t
 
 2. Strategies as template parameters. In C++ templates can be used to configure a class with a strategy. This technique is only applicable if (1) the Strategy can be selected at compile-time, and (2) it does not have to be changed at run-time. In this case, the class to be configured (e.g., Context) is defined as a template class that has a Strategy class as a parameter:
 
-image
+```cpp
+
+```
 
 The class is then configured with a Strategy class when it’s instantiated:
 
-image
+```cpp
+
+```
 
 With templates, there’s no need to define an abstract class that defines the interface to the Strategy. Using Strategy as a template parameter also lets you bind a Strategy to its Context statically, which can increase efficiency.
 
@@ -130,37 +129,51 @@ We’ll give the high-level code for the Motivation example, which is based on t
 
 The Composition class maintains a collection of Component instances, which represent text and graphical elements in a document. A composition arranges component objects into lines using an instance of a Compositor subclass, which encapsulates a linebreaking strategy. Each component has an associated natural size, stretchability, and shrinkability. The stretchability defines how much the component can grow beyond its natural size; shrinkability is how much it can shrink. The composition passes these values to a compositor, which uses them to determine the best location for linebreaks.
 
-image
+```cpp
+
+```
 
 When a new layout is required, the composition asks its compositor to determine where to place linebreaks. The composition passes the compositor three arrays that define natural sizes, stretchabilities, and shrinkabilities of the components. It also passes the number of components, how wide the line is, and an array that the compositor fills with the position of each linebreak. The compositor returns the number of calculated breaks.
 
 The Compositor interface lets the composition pass the compositor all the information it needs. This is an example of “taking the data to the strategy”:
 
-image
+```cpp
+
+```
 
 Note that Compositor is an abstract class. Concrete subclasses define specific linebreaking strategies.
 
 The composition calls its compositor in its Repair operation. Repair first initializes arrays with the natural size, stretchability, and shrinkability of each component (the details of which we omit for brevity). Then it calls on the compositor to obtain the linebreaks and finally lays out the components according to the breaks (also omitted):
 
-image
+```cpp
+
+```
 
 Now let’s look at the Compositor subclasses. SimpleCompositor examines components a line at a time to determine where breaks should go:
 
-image
+```cpp
+
+```
 
 TeXCompositor uses a more global strategy. It examines a paragraph at a time, taking into account the components’ size and stretchability. It also tries to give an even “color” to the paragraph by minimizing the whitespace between components.
 
-image
+```cpp
+
+```
 
 ArrayCompositor breaks the components into lines at regular intervals.
 
-image
+```cpp
+
+```
 
 These classes don’t use all the information passed in Compose. SimpleCompositor ignores the stretchability of the components, taking only their natural widths into account. TeXCompositor uses all the information passed to it, whereas ArrayCompositor ignores everything.
 
 To instantiate Composition, you pass it the compositor you want to use:
 
-image
+```cpp
+
+```
 
 Compositor’s interface is carefully designed to support all layout algorithms that subclasses might implement. You don’t want to have to change this interface with every new subclass, because that will require changing existing subclasses. In general, the Strategy and Context interfaces determine how well the pattern achieves its intent.
 

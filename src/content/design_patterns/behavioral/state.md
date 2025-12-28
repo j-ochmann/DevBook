@@ -1,20 +1,29 @@
-Object Behavioral: State
+---
+id: "state"
+title: "Object Behavioral: State"
+category: "Behavioral"
+goF: 20
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: State
 
-Intent
+## Intent
 
 Allow an object to alter its behavior when its internal state changes. The object will appear to change its class.
 
-Also Known As
+## Also Known As
 
 Objects for States
 
-Motivation
+## Motivation
 
 Consider a class TCPConnection that represents a network connection. A TCP-Connection object can be in one of several different states: Established, Listening, Closed. When a TCPConnection object receives requests from other objects, it responds differently depending on its current state. For example, the effect of an Open request depends on whether the connection is in its Closed state or its Established state. The State pattern describes how TCPConnection can exhibit different behavior in each state.
 
 The key idea in this pattern is to introduce an abstract class called TCPState to represent the states of the network connection. The TCPState class declares an interface common to all classes that represent different operational states. Subclasses of TCPState implement state-specific behavior. For example, the classes TCPEstablished and TCPClosed implement behavior particular to the Established and Closed states of TCPConnection.
 
-image
+```cpp
+
+```
 
 The class TCPConnection maintains a state object (an instance of a subclass of TCPState) that represents the current state of the TCP connection. The class TCP-Connection delegates all state-specific requests to this state object. TCPConnection uses its TCPState subclass instance to perform operations particular to the state of the connection.
 
@@ -23,40 +32,29 @@ Whenever the connection changes state, the TCPConnection object changes the stat
 Applicability
 
 Use the State pattern in either of the following cases:
-
-• An object’s behavior depends on its state, and it must change its behavior at run-time depending on that state.
-
-• Operations have large, multipart conditional statements that depend on the object’s state. This state is usually represented by one or more enumerated constants. Often, several operations will contain this same conditional structure. The State pattern puts each branch of the conditional in a separate class. This lets you treat the object’s state as an object in its own right that can vary independently from other objects.
++ An object’s behavior depends on its state, and it must change its behavior at run-time depending on that state.
++ Operations have large, multipart conditional statements that depend on the object’s state. This state is usually represented by one or more enumerated constants. Often, several operations will contain this same conditional structure. The State pattern puts each branch of the conditional in a separate class. This lets you treat the object’s state as an object in its own right that can vary independently from other objects.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Context (TCPConnection)
-
-– defines the interface of interest to clients.
-
-– maintains an instance of a ConcreteState subclass that defines the current state.
-
-• State (TCPState)
-
-– defines an interface for encapsulating the behavior associated with a particular state of the Context.
-
-• ConcreteState subclasses (TCPEstablished, TCPListen, TCPClosed)
-
-– each subclass implements a behavior associated with a state of the Context.
++ Context (TCPConnection)
+- defines the interface of interest to clients.
+- maintains an instance of a ConcreteState subclass that defines the current state.
++ State (TCPState)
+- defines an interface for encapsulating the behavior associated with a particular state of the Context.
++ ConcreteState subclasses (TCPEstablished, TCPListen, TCPClosed)
+- each subclass implements a behavior associated with a state of the Context.
 
 Collaborations
-
-• Context delegates state-specific requests to the current ConcreteState object.
-
-• A context may pass itself as an argument to the State object handling the request. This lets the State object access the context if necessary.
-
-• Context is the primary interface for clients. Clients can configure a context with State objects. Once a context is configured, its clients don’t have to deal with the State objects directly.
-
-• Either Context or the ConcreteState subclasses can decide which state succeeds another and under what circumstances.
++ Context delegates state-specific requests to the current ConcreteState object.
++ A context may pass itself as an argument to the State object handling the request. This lets the State object access the context if necessary.
++ Context is the primary interface for clients. Clients can configure a context with State objects. Once a context is configured, its clients don’t have to deal with the State objects directly.
++ Either Context or the ConcreteState subclasses can decide which state succeeds another and under what circumstances.
 
 Consequences
 
@@ -87,12 +85,9 @@ Decentralizing the transition logic in this way makes it easy to modify or exten
 2. A table-based alternative. In C++ Programming Style [Car92], Cargill describes another way to impose structure on state-driven code: He uses tables to map inputs to state transitions. For each state, a table maps every possible input to a succeeding state. In effect, this approach converts conditional code (and virtual functions, in the case of the State pattern) into a table look-up.
 
 The main advantage of tables is their regularity: You can change the transition criteria by modifying data instead of changing program code. There are some disadvantages, however:
-
-• A table look-up is often less efficient than a (virtual) function call.
-
-• Putting transition logic into a uniform, tabular format makes the transition criteria less explicit and therefore harder to understand.
-
-• It’s usually difficult to add actions to accompany the state transitions. The table-driven approach captures the states and their transitions, but it must be augmented to perform arbitrary computation on each transition.
++ A table look-up is often less efficient than a (virtual) function call.
++ Putting transition logic into a uniform, tabular format makes the transition criteria less explicit and therefore harder to understand.
++ It’s usually difficult to add actions to accompany the state transitions. The table-driven approach captures the states and their transitions, but it must be augmented to perform arbitrary computation on each transition.
 
 The key difference between table-driven state machines and the State pattern can be summed up like this: The State pattern models state-specific behavior, whereas the table-driven approach focuses on defining state transitions.
 
@@ -108,29 +103,41 @@ The following example gives the C++ code for the TCP connection example describe
 
 First, we define the class TCPConnection, which provides an interface for transmitting data and handles requests to change state.
 
-image
+```cpp
+
+```
 
 TCPConnection keeps an instance of the TCPState class in the _state member variable. The class TCPState duplicates the state-changing interface of TCPConnection. Each TCPState operation takes a TCPConnection instance as a parameter, letting TCPState access data from TCPConnection and change the connection’s state.
 
-image
+```cpp
+
+```
 
 TCPConnection delegates all state-specific requests to its TCPState instance _state. TCPConnection also provides an operation for changing this variable to a new TCPState. The constructor for TCPConnection initializes the object to the TCPClosed state (defined later).
 
-image
+```cpp
+
+```
 
 TCPState implements default behavior for all requests delegated to it. It can also change the state of a TCPConnection with the ChangeState operation. TCPState is declared a friend of TCPConnection to give it privileged access to this operation.
 
-image
+```cpp
+
+```
 
 Subclasses of TCPState implement state-specific behavior. A TCP connection can be in many states: Established, Listening, Closed, etc., and there’s a subclass of TCPState for each state. We’ll discuss three subclasses in detail: TCPEstablished, TCPListen, and TCPClosed.
 
-image
+```cpp
+
+```
 
 TCPState subclasses maintain no local state, so they can be shared, and only one instance of each is required. The unique instance of each TCPState subclass is obtained by the static Instance operation.9
 
 Each TCPState subclass implements state-specific behavior for valid requests in the state:
 
-image
+```cpp
+
+```
 
 After performing state-specific work, these operations call the ChangeState operation to change the state of the TCPConnection. TCPConnection itself doesn’t know a thing about the TCP connection protocol; it’s the TCPState subclasses that define each state transition and action in TCP.
 
@@ -144,7 +151,9 @@ We can define an abstract Tool class from which to define subclasses that implem
 
 This technique is used in both the HotDraw [Joh92] and Unidraw [VL90] drawing editor frameworks. It allows clients to define new kinds of tools easily. In HotDraw, the DrawingController class forwards the requests to the current Tool object. In Unidraw, the corresponding classes are Viewer and Tool. The following class diagram sketches the Tool and DrawingController interfaces:
 
-image
+```cpp
+
+```
 
 Coplien’s Envelope-Letter idiom [Cop92] is related to State. Envelope-Letter is a technique for changing an object’s class at run-time. The State pattern is more specific, focusing on how to deal with an object whose behavior depends on its state.
 

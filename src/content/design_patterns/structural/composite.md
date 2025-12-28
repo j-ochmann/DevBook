@@ -1,16 +1,25 @@
-Object Structural: Composite
+---
+id: "composite"
+title: "Object Structural: Composite"
+category: "Structural"
+goF: 8
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Composite
 
-Intent
+## Intent
 
 Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly.
 
-Motivation
+## Motivation
 
 Graphics applications like drawing editors and schematic capture systems let users build complex diagrams out of simple components. The user can group components to form larger components, which in turn can be grouped to form still larger components. A simple implementation could define classes for graphical primitives such as Text and Lines plus other classes that act as containers for these primitives.
 
 But there’s a problem with this approach: Code that uses these classes must treat primitive and container objects differently, even if most of the time the user treats them identically. Having to distinguish these objects makes the application more complex. The Composite pattern describes how to use recursive composition so that clients don’t have to make this distinction.
 
-image
+```cpp
+
+```
 
 The key to the Composite pattern is an abstract class that represents both primitives and their containers. For the graphics system, this class is Graphic. Graphic declares operations like Draw that are specific to graphical objects. It also declares operations that all composite objects share, such as operations for accessing and managing its children.
 
@@ -20,69 +29,54 @@ The Picture class defines an aggregate of Graphic objects. Picture implements Dr
 
 The following diagram shows a typical composite object structure of recursively composed Graphic objects:
 
-image
+```cpp
+
+```
 
 Applicability
 
 Use the Composite pattern when
-
-• you want to represent part-whole hierarchies of objects.
-
-• you want clients to be able to ignore the difference between compositions of objects and individual objects. Clients will treat all objects in the composite structure uniformly.
++ you want to represent part-whole hierarchies of objects.
++ you want clients to be able to ignore the difference between compositions of objects and individual objects. Clients will treat all objects in the composite structure uniformly.
 
 Structure
 
-image
+```cpp
+
+```
 
 A typical Composite object structure might look like this:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Component (Graphic)
-
-– declares the interface for objects in the composition.
-
-– implements default behavior for the interface common to all classes, as appropriate.
-
-– declares an interface for accessing and managing its child components.
-
-– (optional) defines an interface for accessing a component’s parent in the recursive structure, and implements it if that’s appropriate.
-
-• Leaf (Rectangle, Line, Text, etc.)
-
-– represents leaf objects in the composition. A leaf has no children.
-
-– defines behavior for primitive objects in the composition.
-
-• Composite (Picture)
-
-– defines behavior for components having children.
-
-– stores child components.
-
-– implements child-related operations in the Component interface.
-
-• Client
-
-– manipulates objects in the composition through the Component interface.
++ Component (Graphic)
+- declares the interface for objects in the composition.
+- implements default behavior for the interface common to all classes, as appropriate.
+- declares an interface for accessing and managing its child components.
+- (optional) defines an interface for accessing a component’s parent in the recursive structure, and implements it if that’s appropriate.
++ Leaf (Rectangle, Line, Text, etc.)
+- represents leaf objects in the composition. A leaf has no children.
+- defines behavior for primitive objects in the composition.
++ Composite (Picture)
+- defines behavior for components having children.
+- stores child components.
+- implements child-related operations in the Component interface.
++ Client
+- manipulates objects in the composition through the Component interface.
 
 Collaborations
-
-• Clients use the Component class interface to interact with objects in the composite structure. If the recipient is a Leaf, then the request is handled directly. If the recipient is a Composite, then it usually forwards requests to its child components, possibly performing additional operations before and/or after forwarding.
++ Clients use the Component class interface to interact with objects in the composite structure. If the recipient is a Leaf, then the request is handled directly. If the recipient is a Composite, then it usually forwards requests to its child components, possibly performing additional operations before and/or after forwarding.
 
 Consequences
 
 The Composite pattern
-
-• defines class hierarchies consisting of primitive objects and composite objects. Primitive objects can be composed into more complex objects, which in turn can be composed, and so on recursively. Wherever client code expects a primitive object, it can also take a composite object.
-
-• makes the client simple. Clients can treat composite structures and individual objects uniformly. Clients normally don’t know (and shouldn’t care) whether they’re dealing with a leaf or a composite component. This simplifies client code, because it avoids having to write tag-and-case-statement-style functions over the classes that define the composition.
-
-• makes it easier to add new kinds of components. Newly defined Composite or Leaf subclasses work automatically with existing structures and client code. Clients don’t have to be changed for new Component classes.
-
-• can make your design overly general. The disadvantage of making it easy to add new components is that it makes it harder to restrict the components of a composite. Sometimes you want a composite to have only certain components. With Composite, you can’t rely on the type system to enforce those constraints for you. You’ll have to use run-time checks instead.
++ defines class hierarchies consisting of primitive objects and composite objects. Primitive objects can be composed into more complex objects, which in turn can be composed, and so on recursively. Wherever client code expects a primitive object, it can also take a composite object.
++ makes the client simple. Clients can treat composite structures and individual objects uniformly. Clients normally don’t know (and shouldn’t care) whether they’re dealing with a leaf or a composite component. This simplifies client code, because it avoids having to write tag-and-case-statement-style functions over the classes that define the composition.
++ makes it easier to add new kinds of components. Newly defined Composite or Leaf subclasses work automatically with existing structures and client code. Clients don’t have to be changed for new Component classes.
++ can make your design overly general. The disadvantage of making it easy to add new components is that it makes it harder to restrict the components of a composite. Sometimes you want a composite to have only certain components. With Composite, you can’t rely on the type system to enforce those constraints for you. You’ll have to use run-time checks instead.
 
 Implementation
 
@@ -109,20 +103,22 @@ The child management operations are more troublesome and are discussed in the ne
 4. Declaring the child management operations. Although the Composite class implements the Add and Remove operations for managing children, an important issue in the Composite pattern is which classes declare these operations in the Composite class hierarchy. Should we declare these operations in the Component and make them meaningful for Leaf classes, or should we declare and define them only in Composite and its subclasses?
 
 The decision involves a trade-off between safety and transparency:
-
-• Defining the child management interface at the root of the class hierarchy gives you transparency, because you can treat all components uniformly. It costs you safety, however, because clients may try to do meaningless things like add and remove objects from leaves.
-
-• Defining child management in the Composite class gives you safety, because any attempt to add or remove objects from leaves will be caught at compile-time in a statically typed language like C++. But you lose transparency, because leaves and composites have different interfaces.
++ Defining the child management interface at the root of the class hierarchy gives you transparency, because you can treat all components uniformly. It costs you safety, however, because clients may try to do meaningless things like add and remove objects from leaves.
++ Defining child management in the Composite class gives you safety, because any attempt to add or remove objects from leaves will be caught at compile-time in a statically typed language like C++. But you lose transparency, because leaves and composites have different interfaces.
 
 We have emphasized transparency over safety in this pattern. If you opt for safety, then at times you may lose type information and have to convert a component into a composite. How can you do this without resorting to a type-unsafe cast?
 
 One approach is to declare an operation Composite* GetComposite() in the Component class. Component provides a default operation that returns a null pointer. The Composite class redefines this operation to return itself through the this pointer:
 
-image
+```cpp
+
+```
 
 GetComposite lets you query a component to see if it’s a composite. You can perform Add and Remove safely on the composite it returns.
 
-image
+```cpp
+
+```
 
 Similar tests for a Composite can be done using the C++ dynamic_cast construct.
 
@@ -154,43 +150,52 @@ Equipment such as computers and stereo components are often organized into part-
 
 Equipment class defines an interface for all equipment in the part-whole hierarchy.
 
-image
+```cpp
+
+```
 
 Equipment declares operations that return the attributes of a piece of equipment, like its power consumption and cost. Subclasses implement these operations for specific kinds of equipment. Equipment also declares a CreateIterator operation that returns an Iterator (see Appendix C) for accessing its parts. The default implementation for this operation returns a NullIterator, which iterates over the empty set.
 
 Subclasses of Equipment might include Leaf classes that represent disk drives, integrated circuits, and switches:
 
-image
+```cpp
+
+```
 
 CompositeEquipment is the base class for equipment that contains other equipment. It’s also a subclass of Equipment.
 
-image
+```cpp
+
+```
 
 CompositeEquipment defines the operations for accessing and managing subequipment. The operations Add and Remove insert and delete equipment from the list of equipment stored in the _equipment member. The operation CreateIterator returns an iterator (specifically, an instance of ListIterator) that will traverse this list.
 
 A default implementation of NetPrice might use CreateIterator to sum the net prices of the subequipment2:
 
-image
+```cpp
+
+```
 
 Now we can represent a computer chassis as a subclass of CompositeEquipment called Chassis. Chassis inherits the child-related operations from CompositeEquipment.
 
-image
+```cpp
+
+```
 
 We can define other equipment containers such as Cabinet and Bus in a similar way. That gives us everything we need to assemble equipment into a (pretty simple) personal computer:
 
-image
+```cpp
+
+```
 
 Known Uses
 
 Examples of the Composite pattern can be found in almost all object-oriented systems. The original View class of Smalltalk Model/View/Controller [KP88] was a Composite, and nearly every user interface toolkit or framework has followed in its steps, including ET++ (with its VObjects [WGM88]) and Interviews (Styles [LCI+92], Graphics [VL88], and Glyphs [CL90]). It’s interesting to note that the original View of Model/View/Controller had a set of subviews; in other words, View was both the Component class and the Composite class. Release 4.0 of Smalltalk-80 revised Model/View/Controller with a VisualComponent class that has subclasses View and CompositeView.
 
 The RTL Smalltalk compiler framework [JML92] uses the Composite pattern extensively. RTLExpression is a Component class for parse trees. It has subclasses, such as BinaryExpression, that contain child RTLExpression objects. These classes define a composite structure for parse trees. RegisterTransfer is the Component class for a program’s intermediate Single Static Assignment (SSA) form. Leaf subclasses of RegisterTransfer define different static assignments such as
-
-• primitive assignments that perform an operation on two registers and assign the result to a third;
-
-• an assignment with a source register but no destination register, which indicates that the register is used after a routine returns; and
-
-• an assignment with a destination register but no source, which indicates that the register is assigned before the routine starts.
++ primitive assignments that perform an operation on two registers and assign the result to a third;
++ an assignment with a source register but no destination register, which indicates that the register is used after a routine returns; and
++ an assignment with a destination register but no source, which indicates that the register is assigned before the routine starts.
 
 Another subclass, RegisterTransferSet, is a Composite class for representing assignments that change several registers at once.
 

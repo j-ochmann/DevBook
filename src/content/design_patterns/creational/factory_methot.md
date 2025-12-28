@@ -1,3 +1,10 @@
+---
+id: "factory_method"
+title: "Object Creational: Factory Method"
+category: "Creational"
+goF: 3
+tags: ["cpp", "java", "python"]
+---
 # Class Creational: Factory Method
 
 ## Intent

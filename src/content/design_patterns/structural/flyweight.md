@@ -1,16 +1,25 @@
-Object Structural: Flyweight
+---
+id: "flyweight"
+title: "Object Structural: Flyweight"
+category: "Structural"
+goF: 11
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Flyweight
 
-Intent
+## Intent
 
 Use sharing to support large numbers of fine-grained objects efficiently.
 
-Motivation
+## Motivation
 
 Some applications could benefit from using objects throughout their design, but a naive implementation would be prohibitively expensive.
 
 For example, most document editor implementations have text formatting and editing facilities that are modularized to some extent. Object-oriented document editors typically use objects to represent embedded elements like tables and figures. However, they usually stop short of using an object for each character in the document, even though doing so would promote flexibility at the finest levels in the application. Characters and embedded elements could then be treated uniformly with respect to how they are drawn and formatted. The application could be extended to support new character sets without disturbing other functionality. The application’s object structure could mimic the document’s physical structure. The following diagram shows how a document editor can use objects to represent characters.
 
-image
+```cpp
+
+```
 
 The drawback of such a design is its cost. Even moderate-sized documents may require hundreds of thousands of character objects, which will consume lots of memory and may incur unacceptable run-time overhead. The Flyweight pattern describes how to share objects to allow their use at fine granularities without prohibitive cost.
 
@@ -20,15 +29,21 @@ Flyweights model concepts or entities that are normally too plentiful to represe
 
 Logically there is an object for every occurrence of a given character in the document:
 
-image
+```cpp
+
+```
 
 Physically, however, there is one shared flyweight object per character, and it appears in different contexts in the document structure. Each occurrence of a particular character object refers to the same instance in the shared pool of flyweight objects:
 
-image
+```cpp
+
+```
 
 The class structure for these objects is shown next. Glyph is the abstract class for graphical objects, some of which may be flyweights. Operations that may depend on extrinsic state have it passed to them as a parameter. For example, Draw and Intersects must know which context the glyph is in before they can do their job.
 
-image
+```cpp
+
+```
 
 A flyweight representing the letter “a” only stores the corresponding character code; it doesn’t need to store its location or font. Clients supply the context-dependent information that the flyweight needs to draw itself. For example, a Row glyph knows where its children should draw themselves so that they are tiled horizontally. Thus it can pass each child its location in the draw request.
 
@@ -37,68 +52,50 @@ Because the number of different character objects is far less than the number of
 Applicability
 
 The Flyweight pattern’s effectiveness depends heavily on how and where it’s used. Apply the Flyweight pattern when all of the following are true:
-
-• An application uses a large number of objects.
-
-• Storage costs are high because of the sheer quantity of objects.
-
-• Most object state can be made extrinsic.
-
-• Many groups of objects may be replaced by relatively few shared objects once extrinsic state is removed.
-
-• The application doesn’t depend on object identity. Since flyweight objects may be shared, identity tests will return true for conceptually distinct objects.
++ An application uses a large number of objects.
++ Storage costs are high because of the sheer quantity of objects.
++ Most object state can be made extrinsic.
++ Many groups of objects may be replaced by relatively few shared objects once extrinsic state is removed.
++ The application doesn’t depend on object identity. Since flyweight objects may be shared, identity tests will return true for conceptually distinct objects.
 
 Structure
 
-image
+```cpp
+
+```
 
 The following object diagram shows how flyweights are shared:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Flyweight (Glyph)
-
-– declares an interface through which flyweights can receive and act on extrinsic state.
-
-• ConcreteFlyweight (Character)
-
-– implements the Flyweight interface and adds storage for intrinsic state, if any. A ConcreteFlyweight object must be sharable. Any state it stores must be intrinsic; that is, it must be independent of the ConcreteFlyweight object’s context.
-
-• UnsharedConcreteFlyweight (Row, Column)
-
-– not all Flyweight subclasses need to be shared. The Flyweight interface enables sharing; it doesn’t enforce it. It’s common for UnsharedConcreteFlyweight objects to have ConcreteFlyweight objects as children at some level in the flyweight object structure (as the Row and Column classes have).
-
-• FlyweightFactory
-
-– creates and manages flyweight objects.
-
-– ensures that flyweights are shared properly. When a client requests a flyweight, the FlyweightFactory object supplies an existing instance or creates one, if none exists.
-
-• Client
-
-– maintains a reference to flyweight(s).
-
-– computes or stores the extrinsic state of flyweight(s).
++ Flyweight (Glyph)
+- declares an interface through which flyweights can receive and act on extrinsic state.
++ ConcreteFlyweight (Character)
+- implements the Flyweight interface and adds storage for intrinsic state, if any. A ConcreteFlyweight object must be sharable. Any state it stores must be intrinsic; that is, it must be independent of the ConcreteFlyweight object’s context.
++ UnsharedConcreteFlyweight (Row, Column)
+- not all Flyweight subclasses need to be shared. The Flyweight interface enables sharing; it doesn’t enforce it. It’s common for UnsharedConcreteFlyweight objects to have ConcreteFlyweight objects as children at some level in the flyweight object structure (as the Row and Column classes have).
++ FlyweightFactory
+- creates and manages flyweight objects.
+- ensures that flyweights are shared properly. When a client requests a flyweight, the FlyweightFactory object supplies an existing instance or creates one, if none exists.
++ Client
+- maintains a reference to flyweight(s).
+- computes or stores the extrinsic state of flyweight(s).
 
 Collaborations
-
-• State that a flyweight needs to function must be characterized as either intrinsic or extrinsic. Intrinsic state is stored in the ConcreteFlyweight object; extrinsic state is stored or computed by Client objects. Clients pass this state to the flyweight when they invoke its operations.
-
-• Clients should not instantiate ConcreteFlyweights directly. Clients must obtain ConcreteFlyweight objects exclusively from the FlyweightFactory object to ensure they are shared properly.
++ State that a flyweight needs to function must be characterized as either intrinsic or extrinsic. Intrinsic state is stored in the ConcreteFlyweight object; extrinsic state is stored or computed by Client objects. Clients pass this state to the flyweight when they invoke its operations.
++ Clients should not instantiate ConcreteFlyweights directly. Clients must obtain ConcreteFlyweight objects exclusively from the FlyweightFactory object to ensure they are shared properly.
 
 Consequences
 
 Flyweights may introduce run-time costs associated with transferring, finding, and/or computing extrinsic state, especially if it was formerly stored as intrinsic state. However, such costs are offset by space savings, which increase as more flyweights are shared.
 
 Storage savings are a function of several factors:
-
-• the reduction in the total number of instances that comes from sharing
-
-• the amount of intrinsic state per object
-
-• whether extrinsic state is computed or stored.
++ the reduction in the total number of instances that comes from sharing
++ the amount of intrinsic state per object
++ whether extrinsic state is computed or stored.
 
 The more flyweights are shared, the greater the storage savings. The savings increase with the amount of shared state. The greatest savings occur when the objects use substantial quantities of both intrinsic and extrinsic state, and the extrinsic state can be computed rather than stored. Then you save on storage in two ways: Sharing reduces the cost of intrinsic state, and you trade extrinsic state for computation time.
 
@@ -120,15 +117,21 @@ Sample Code
 
 Returning to our document formatter example, we can define a Glyph base class for flyweight graphical objects. Logically, glyphs are Composites (see Composite (163)) that have graphical attributes and can draw themselves. Here we focus on just the font attribute, but the same approach can be used for any other graphical attributes a glyph might have.
 
-image
+```cpp
+
+```
 
 The Character subclass just stores a character code:
 
-image
+```cpp
+
+```
 
 To keep from allocating space for a font attribute in every glyph, we’ll store the attribute extrinsically in a GlyphContext object. GlyphContext acts as a repository of extrinsic state. It maintains a compact mapping between a glyph and its font (and any other graphical attributes it might have) in different contexts. Any operation that needs to know the glyph’s font in a given context will have a GlyphContext instance passed to it as a parameter. The operation can then query the GlyphContext for the font in that context. The context depends on the glyph’s location in the glyph structure. Therefore Glyph’s child iteration and manipulation operations must update the GlyphContext whenever they’re used.
 
-image
+```cpp
+
+```
 
 GlyphContext must be kept informed of the current position in the glyph structure during traversal. GlyphContext::Next increments _index as the traversal proceeds. Glyph subclasses that have children (e.g., Row and Column) must implement Next so that it calls GlyphContext::Next at each point in the traversal.
 
@@ -136,45 +139,65 @@ GlyphContext::GetFont uses the index as a key into a BTree structure that stores
 
 Consider the following excerpt from a glyph composition:
 
-image
+```cpp
+
+```
 
 The BTree structure for font information might look like
 
-image
+```cpp
+
+```
 
 Interior nodes define ranges of glyph indices. BTree is updated in response to font changes and whenever glyphs are added to or removed from the glyph structure. For example, assuming we’re at index 102 in the traversal, the following code sets the font of each character in the word “expect” to that of the surrounding text (that is, times12, an instance of Font for 12-point Times Roman):
 
-image
+```cpp
+
+```
 
 The new BTree structure (with changes shown in black) looks like
 
-image
+```cpp
+
+```
 
 Suppose we add the word “don’t” (including a trailing space) in 12-point Times Italic before “expect.” The following code informs the gc of this event, assuming it is still at index 102:
 
-image
+```cpp
+
+```
 
 The BTree structure becomes
 
-image
+```cpp
+
+```
 
 When the GlyphContext is queried for the font of the current glyph, it descends the BTree, adding up indices as it goes until it finds the font for the current index. Because the frequency of font changes is relatively low, the tree stays small relative to the size of the glyph structure. This keeps storage costs down without an inordinate increase in look-up time.3
 
 The last object we need is a FlyweightFactory that creates glyphs and ensures they’re shared properly. Class GlyphFactory instantiates Character and other kinds of glyphs. We only share Character objects; composite glyphs are far less plentiful, and their important state (i.e., their children) is intrinsic anyway.
 
-image
+```cpp
+
+```
 
 The _character array contains pointers to Character glyphs indexed by character code. The array is initialized to zero in the constructor.
 
-image
+```cpp
+
+```
 
 CreateCharacter looks up a character in the character glyph in the array, and it returns the corresponding glyph if it exists. If it doesn’t, then CreateCharacter creates the glyph, puts it in the array, and returns it:
 
-image
+```cpp
+
+```
 
 The other operations simply instantiate a new object each time they’re called, since noncharacter glyphs won’t be shared:
 
-image
+```cpp
+
+```
 
 We could omit these operations and let clients instantiate unshared glyphs directly. However, if we decide to make these glyphs sharable later, we’ll have to change client code that creates them.
 

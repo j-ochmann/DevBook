@@ -1,10 +1,17 @@
-Object Structural: Bridge
+---
+id: "bridge"
+title: "Object Structural: Bridge"
+category: "Structural"
+goF: 7
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Bridge
 
-Intent
+## Intent
 
 Decouple an abstraction from its implementation so that the two can vary independently.
 
-Also Known As
+## Also Known As
 
 Handle/Body
 
@@ -16,7 +23,9 @@ Consider the implementation of a portable Window abstraction in a user interface
 
 1. It’s inconvenient to extend the Window abstraction to cover different kinds of windows or new platforms. Imagine an IconWindow subclass of Window that specializes the Window abstraction for icons. To support Icon Windows for both platforms, we have to implement two new classes, XIconWindow and PMIconWindow. Worse, we’ll have to define two classes for every kind of window. Supporting a third platform requires yet another new Window subclass for every kind of window.
 
-image
+```cpp
+
+```
 
 2. It makes client code platform-dependent. Whenever a client creates a window, it instantiates a concrete class that has a specific implementation. For example, creating an XWindow object binds the Window abstraction to the X Window implementation, which makes the client code dependent on the X Window implementation. This, in turn, makes it harder to port the client code to other platforms.
 
@@ -24,53 +33,41 @@ Clients should be able to create a window without committing to a concrete imple
 
 The Bridge pattern addresses these problems by putting the Window abstraction and its implementation in separate class hierarchies. There is one class hierarchy for window interfaces (Window, IconWindow, TransientWindow) and a separate hierarchy for platform-specific window implementations, with WindowImp as its root. The XWindowImp subclass, for example, provides an implementation based on the X Window System.
 
-image
+```cpp
+
+```
 
 All operations on Window subclasses are implemented in terms of abstract operations from the WindowImp interface. This decouples the window abstractions from the various platform-specific implementations. We refer to the relationship between Window and WindowImp as a bridge, because it bridges the abstraction and its implementation, letting them vary independently.
 
 Applicability
 
 Use the Bridge pattern when
-
-• you want to avoid a permanent binding between an abstraction and its implementation. This might be the case, for example, when the implementation must be selected or switched at run-time.
-
-• both the abstractions and their implementations should be extensible by subclassing. In this case, the Bridge pattern lets you combine the different abstractions and implementations and extend them independently.
-
-• changes in the implementation of an abstraction should have no impact on clients; that is, their code should not have to be recompiled.
-
-• (C++) you want to hide the implementation of an abstraction completely from clients. In C++ the representation of a class is visible in the class interface.
-
-• you have a proliferation of classes as shown earlier in the first Motivation diagram. Such a class hierarchy indicates the need for splitting an object into two parts. Rumbaugh uses the term “nested generalizations” [RBP+91] to refer to such class hierarchies.
-
-• you want to share an implementation among multiple objects (perhaps using reference counting), and this fact should be hidden from the client. A simple example is Coplien’s String class [Cop92], in which multiple objects can share the same string representation (StringRep).
++ you want to avoid a permanent binding between an abstraction and its implementation. This might be the case, for example, when the implementation must be selected or switched at run-time.
++ both the abstractions and their implementations should be extensible by subclassing. In this case, the Bridge pattern lets you combine the different abstractions and implementations and extend them independently.
++ changes in the implementation of an abstraction should have no impact on clients; that is, their code should not have to be recompiled.
++ (C++) you want to hide the implementation of an abstraction completely from clients. In C++ the representation of a class is visible in the class interface.
++ you have a proliferation of classes as shown earlier in the first Motivation diagram. Such a class hierarchy indicates the need for splitting an object into two parts. Rumbaugh uses the term “nested generalizations” [RBP+91] to refer to such class hierarchies.
++ you want to share an implementation among multiple objects (perhaps using reference counting), and this fact should be hidden from the client. A simple example is Coplien’s String class [Cop92], in which multiple objects can share the same string representation (StringRep).
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Abstraction (Window)
-
-– defines the abstraction’s interface.
-
-– maintains a reference to an object of type Implementor.
-
-• RefmedAbstraction (IconWindow)
-
-– Extends the interface defined by Abstraction.
-
-• Implementor (WindowImp)
-
-– defines the interface for implementation classes. This interface doesn’t have to correspond exactly to Abstraction’s interface; in fact the two interfaces can be quite different. Typically the Implementor interface provides only primitive operations, and Abstraction defines higher-level operations based on these primitives.
-
-• ConcreteImplementor (XWindowImp, PMWindowImp)
-
-– implements the Implementor interface and defines its concrete implementation.
++ Abstraction (Window)
+- defines the abstraction’s interface.
+- maintains a reference to an object of type Implementor.
++ RefmedAbstraction (IconWindow)
+- Extends the interface defined by Abstraction.
++ Implementor (WindowImp)
+- defines the interface for implementation classes. This interface doesn’t have to correspond exactly to Abstraction’s interface; in fact the two interfaces can be quite different. Typically the Implementor interface provides only primitive operations, and Abstraction defines higher-level operations based on these primitives.
++ ConcreteImplementor (XWindowImp, PMWindowImp)
+- implements the Implementor interface and defines its concrete implementation.
 
 Collaborations
-
-• Abstraction forwards client requests to its Implementor object.
++ Abstraction forwards client requests to its Implementor object.
 
 Consequences
 
@@ -104,7 +101,9 @@ It’s also possible to delegate the decision to another object altogether. In t
 
 3. Sharing implementors. Coplien illustrates how the Handle/Body idiom in C++ can be used to share implementations among several objects [Cop92]. The Body stores a reference count that the Handle class increments and decrements. The code for assigning handles with shared bodies has the following general form:
 
-image
+```cpp
+
+```
 
 4. Using multiple inheritance. You can use multiple inheritance in C++ to combine an interface with its implementation [Mar91]. For example, a class can inherit publicly from Abstraction and privately from a ConcreteImplementor. But because this approach relies on static inheritance, it binds an implementation permanently to its interface. Therefore you can’t implement a true Bridge with multiple inheritance—at least not in C++.
 
@@ -112,51 +111,73 @@ Sample Code
 
 The following C++ code implements the Window/WindowImp example from the Motivation section. The Window class defines the window abstraction for client applications:
 
-image
+```cpp
+
+```
 
 Window maintains a reference to a WindowImp, the abstract class that declares an interface to the underlying windowing system.
 
-image
+```cpp
+
+```
 
 Subclasses of Window define the different kinds of windows the application might use, such as application windows, icons, transient windows for dialogs, floating palettes of tools, and so on.
 
 For example, ApplicationWindow will implement DrawContents to draw the View instance it stores:
 
-image
+```cpp
+
+```
 
 IconWindow stores the name of a bitmap for the icon it displays...
 
-image
+```cpp
+
+```
 
 ...and it implements DrawContents to draw the bitmap on the window:
 
-image
+```cpp
+
+```
 
 Many other variations of Window are possible. A TransientWindow may need to communicate with the window that created it during the dialog; hence it keeps a reference to that window. A PaletteWindow always floats above other windows. An IconDockWindow holds IconWindows and arranges them neatly.
 
 Window operations are defined in terms of the WindowImp interface. For example, DrawRect extracts four coordinates from its two Point parameters before calling the WindowImp operation that draws the rectangle in the window:
 
-image
+```cpp
+
+```
 
 Concrete subclasses of WindowImp support different window systems. The XWindowImp subclass supports the X Window System:
 
-image
+```cpp
+
+```
 
 For Presentation Manager (PM), we define a PMWindowImp class:
 
-image
+```cpp
+
+```
 
 These subclasses implement WindowImp operations in terms of window system primitives. For example, DeviceRect is implemented for X as follows:
 
-image
+```cpp
+
+```
 
 The PM implementation might look like this:
 
-image
+```cpp
+
+```
 
 How does a window obtain an instance of the right WindowImp subclass? We’ll assume Window has that responsibility in this example. Its GetWindowImp operation gets the right instance from an abstract factory (see Abstract Factory (87)) that effectively encapsulates all window system specifics.
 
-image
+```cpp
+
+```
 
 WindowSystemFactory::Instance() returns an abstract factory that manufactures all window system-specific objects. For simplicity, we’ve made it a Singleton (127) and have let the Window class access the factory directly.
 

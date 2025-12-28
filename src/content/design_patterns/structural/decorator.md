@@ -1,14 +1,21 @@
-Object Structural: Decorator
+---
+id: "decorator"
+title: "Object Structural: Decorator"
+category: "Structural"
+goF: 9
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Decorator
 
-Intent
+## Intent
 
 Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
 
-Also Known As
+## Also Known As
 
 Wrapper
 
-Motivation
+## Motivation
 
 Sometimes we want to add responsibilities to individual objects, not to an entire class. A graphical user interface toolkit, for example, should let you add properties like borders or behaviors like scrolling to any user interface component.
 
@@ -16,17 +23,23 @@ One way to add responsibilities is with inheritance. Inheriting a border from an
 
 A more flexible approach is to enclose the component in another object that adds the border. The enclosing object is called a decorator. The decorator conforms to the interface of the component it decorates so that its presence is transparent to the component’s clients. The decorator forwards requests to the component and may perform additional actions (such as drawing a border) before or after forwarding. Transparency lets you nest decorators recursively, thereby allowing an unlimited number of added responsibilities.
 
-image
+```cpp
+
+```
 
 For example, suppose we have a TextView object that displays text in a window. TextView has no scroll bars by default, because we might not always need them. When we do, we can use a ScrollDecorator to add them. Suppose we also want to add a thick black border around the TextView. We can use a BorderDecorator to add this as well. We simply compose the decorators with the TextView to produce the desired result.
 
 The following object diagram shows how to compose a TextView object with BorderDecorator and ScrollDecorator objects to produce a bordered, scrollable text view:
 
-image
+```cpp
+
+```
 
 The ScrollDecorator and BorderDecorator classes are subclasses of Decorator, an abstract class for visual components that decorate other visual components.
 
-image
+```cpp
+
+```
 
 VisualComponent is the abstract class for visual objects. It defines their drawing and event handling interface. Note how the Decorator class simply forwards draw requests to its component, and how Decorator subclasses can extend this operation.
 
@@ -35,38 +48,28 @@ Decorator subclasses are free to add operations for specific functionality. For 
 Applicability
 
 Use Decorator
-
-• to add responsibilities to individual objects dynamically and transparently, that is, without affecting other objects.
-
-• for responsibilities that can be withdrawn.
-
-• when extension by subclassing is impractical. Sometimes a large number of independent extensions are possible and would produce an explosion of subclasses to support every combination. Or a class definition may be hidden or otherwise unavailable for subclassing.
++ to add responsibilities to individual objects dynamically and transparently, that is, without affecting other objects.
++ for responsibilities that can be withdrawn.
++ when extension by subclassing is impractical. Sometimes a large number of independent extensions are possible and would produce an explosion of subclasses to support every combination. Or a class definition may be hidden or otherwise unavailable for subclassing.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Component (VisualComponent)
-
-– defines the interface for objects that can have responsibilities added to them dynamically.
-
-• ConcreteComponent (TextView)
-
-– defines an object to which additional responsibilities can be attached.
-
-• Decorator
-
-– maintains a reference to a Component object and defines an interface that conforms to Component’s interface.
-
-• ConcreteDecorator (BorderDecorator, ScrollDecorator)
-
-– adds responsibilities to the component.
++ Component (VisualComponent)
+- defines the interface for objects that can have responsibilities added to them dynamically.
++ ConcreteComponent (TextView)
+- defines an object to which additional responsibilities can be attached.
++ Decorator
+- maintains a reference to a Component object and defines an interface that conforms to Component’s interface.
++ ConcreteDecorator (BorderDecorator, ScrollDecorator)
+- adds responsibilities to the component.
 
 Collaborations
-
-• Decorator forwards requests to its Component object. It may optionally perform additional operations before and after forwarding the request.
++ Decorator forwards requests to its Component object. It may optionally perform additional operations before and after forwarding the request.
 
 Consequences
 
@@ -102,11 +105,15 @@ In MacApp 3.0 [App89] and Bedrock [Sym93a], for example, graphical components (c
 
 Since the Decorator pattern only changes a component from the outside, the component doesn’t have to know anything about its decorators; that is, the decorators are transparent to the component:
 
-image
+```cpp
+
+```
 
 With strategies, the component itself knows about possible extensions. So it has to reference and maintain the corresponding strategies:
 
-image
+```cpp
+
+```
 
 The Strategy-based approach might require modifying the component to accommodate new extensions. On the other hand, a strategy can have its own specialized interface, whereas a decorator’s interface must conform to the component’s. A strategy for rendering a border, for example, need only define the interface for rendering a border (DrawBorder, GetWidth, etc.), which means that the strategy can be lightweight even if the Component class is heavyweight.
 
@@ -116,19 +123,27 @@ Sample Code
 
 The following code shows how to implement user interface decorators in C++. We’ll assume there’s a Component class called VisualComponent.
 
-image
+```cpp
+
+```
 
 We define a subclass of VisualComponent called Decorator, which we’ll subclass to obtain different decorations.
 
-image
+```cpp
+
+```
 
 Decorator decorates the VisualComponent referenced by the _component instance variable, which is initialized in the constructor. For each operation in VisualComponent’s interface, Decorator defines a default implementation that passes the request on to _component:
 
-image
+```cpp
+
+```
 
 Subclasses of Decorator define specific decorations. For example, the class BorderDecorator adds a border to its enclosing component. BorderDecorator is a subclass of Decorator that overrides the Draw operation to draw the border. BorderDecorator also defines a private DrawBorder helper operation that does the drawing. The subclass inherits all other operation implementations from Decorator.
 
-image
+```cpp
+
+```
 
 A similar implementation would follow for ScrollDecorator and DropShadowDecorator, which would add scrolling and drop shadow capabilities to a visual component.
 
@@ -136,11 +151,15 @@ Now we can compose instances of these classes to provide different decorations. 
 
 First, we need a way to put a visual component into a window object. We’ll assume our Window class provides a SetContents operation for this purpose:
 
-image
+```cpp
+
+```
 
 Now we can create the text view and a window to put it in:
 
-image
+```cpp
+
+```
 
 TextView is a VisualComponent, which lets us put it into the window:
 
@@ -148,7 +167,9 @@ window->SetContents(textView);
 
 But we want a bordered and scrollable TextView. So we decorate it accordingly before putting it in the window.
 
-image
+```cpp
+
+```
 
 Because Window accesses its contents through the VisualComponent interface, it’s unaware of the decorator’s presence. You, as the client, can still keep track of the text view if you have to interact with it directly, for example, when you need to invoke operations that aren’t part of the VisualComponent interface. Clients that rely on the component’s identity should refer to it directly as well.
 
@@ -159,14 +180,14 @@ Many object-oriented user interface toolkits use decorators to add graphical emb
 But the Decorator pattern is by no means limited to graphical user interfaces, as the following example (based on the ET++ streaming classes [WGM88]) illustrates.
 
 Streams are a fundamental abstraction in most I/O facilities. A stream can provide an interface for converting objects into a sequence of bytes or characters. That lets us transcribe an object to a file or to a string in memory for retrieval later. A straightforward way to do this is to define an abstract Stream class with subclasses MemoryStream and FileStream. But suppose we also want to be able to do the following:
-
-• Compress the stream data using different compression algorithms (run-length encoding, Lempel-Ziv, etc.).
-
-• Reduce the stream data to 7-bit ASCII characters so that it can be transmitted over an ASCII communication channel.
++ Compress the stream data using different compression algorithms (run-length encoding, Lempel-Ziv, etc.).
++ Reduce the stream data to 7-bit ASCII characters so that it can be transmitted over an ASCII communication channel.
 
 The Decorator pattern gives us an elegant way to add these responsibilities to streams. The diagram below shows one solution to the problem:
 
-image
+```cpp
+
+```
 
 The Stream abstract class maintains an internal buffer and provides operations for storing data onto the stream (PutInt, PutString). Whenever the buffer is full, Stream calls the abstract operation HandleBufferFull, which does the actual data transfer. The FileStream version of this operation overrides this operation to transfer the buffer to a file.
 
@@ -174,7 +195,9 @@ The key class here is StreamDecorator, which maintains a reference to a componen
 
 For example, the CompressingStream subclass compresses the data, and the ASCII7Stream converts the data into 7-bit ASCII. Now, to create a FileStream that compresses its data and converts the compressed binary data to 7-bit ASCII, we decorate a FileStream with a CompressingStream and an ASCII7Stream:
 
-image
+```cpp
+
+```
 
 Related Patterns
 

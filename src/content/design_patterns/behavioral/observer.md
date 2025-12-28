@@ -1,20 +1,29 @@
-Object Behavioral: Observer
+---
+id: "observer"
+title: "Object Behavioral: Observer"
+category: "Behavioral"
+goF: 19
+tags: ["cpp", "java", "python"]
+---
+# Object Behavioral: Observer
 
-Intent
+## Intent
 
 Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
 
-Also Known As
+## Also Known As
 
 Dependents, Publish-Subscribe
 
-Motivation
+## Motivation
 
 A common side-effect of partitioning a system into a collection of cooperating classes is the need to maintain consistency between related objects. You don’t want to achieve consistency by making the classes tightly coupled, because that reduces their reusability.
 
 For example, many graphical user interface toolkits separate the presentational aspects of the user interface from the underlying application data [KP88, LVC89, P+88, WGM88]. Classes defining application data and presentations can be reused independently. They can work together, too. Both a spreadsheet object and bar chart object can depict information in the same application data object using different presentations. The spreadsheet and the bar chart don’t know about each other, thereby letting you reuse only the one you need. But they behave as though they do. When the user changes the information in the spreadsheet, the bar chart reflects the changes immediately, and vice versa.
 
-image
+```cpp
+
+```
 
 This behavior implies that the spreadsheet and bar chart are dependent on the data object and therefore should be notified of any change in its state. And there’s no reason to limit the number of dependent objects to two; there may be any number of different user interfaces to the same data.
 
@@ -25,52 +34,39 @@ This kind of interaction is also known as publish-subscribe. The subject is the 
 Applicability
 
 Use the Observer pattern in any of the following situations:
-
-• When an abstraction has two aspects, one dependent on the other. Encapsulating these aspects in separate objects lets you vary and reuse them independently.
-
-• When a change to one object requires changing others, and you don’t know how many objects need to be changed.
-
-• When an object should be able to notify other objects without making assumptions about who these objects are. In other words, you don’t want these objects tightly coupled.
++ When an abstraction has two aspects, one dependent on the other. Encapsulating these aspects in separate objects lets you vary and reuse them independently.
++ When a change to one object requires changing others, and you don’t know how many objects need to be changed.
++ When an object should be able to notify other objects without making assumptions about who these objects are. In other words, you don’t want these objects tightly coupled.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Subject
-
-– knows its observers. Any number of Observer objects may observe a subject.
-
-– provides an interface for attaching and detaching Observer objects.
-
-• Observer
-
-– defines an updating interface for objects that should be notified of changes in a subject.
-
-• ConcreteSubject
-
-– stores state of interest to ConcreteObserver objects.
-
-– sends a notification to its observers when its state changes.
-
-• ConcreteObserver
-
-– maintains a reference to a ConcreteSubject object.
-
-– stores state that should stay consistent with the subject’s.
-
-– implements the Observer updating interface to keep its state consistent with the subject’s.
++ Subject
+- knows its observers. Any number of Observer objects may observe a subject.
+- provides an interface for attaching and detaching Observer objects.
++ Observer
+- defines an updating interface for objects that should be notified of changes in a subject.
++ ConcreteSubject
+- stores state of interest to ConcreteObserver objects.
+- sends a notification to its observers when its state changes.
++ ConcreteObserver
+- maintains a reference to a ConcreteSubject object.
+- stores state that should stay consistent with the subject’s.
+- implements the Observer updating interface to keep its state consistent with the subject’s.
 
 Collaborations
-
-• ConcreteSubject notifies its observers whenever a change occurs that could make its observers’ state inconsistent with its own.
-
-• After being informed of a change in the concrete subject, a ConcreteObserver object may query the subject for information. ConcreteObserver uses this information to reconcile its state with that of the subject.
++ ConcreteSubject notifies its observers whenever a change occurs that could make its observers’ state inconsistent with its own.
++ After being informed of a change in the concrete subject, a ConcreteObserver object may query the subject for information. ConcreteObserver uses this information to reconcile its state with that of the subject.
 
 The following interaction diagram illustrates the collaborations between a subject and two observers:
 
-image
+```cpp
+
+```
 
 Note how the Observer object that initiates the change request postpones its update until it gets a notification from the subject. Notify is not always called by the subject. It can be called by an observer or by another kind of object entirely. The Implementation section discusses some common variations.
 
@@ -110,11 +106,15 @@ Several issues related to the implementation of the dependency mechanism are dis
 
 This self-consistency rule is easy to violate unintentionally when Subject subclass operations call inherited operations. For example, the notification in the following code sequence is trigged when the subject is in an inconsistent state:
 
-image
+```cpp
+
+```
 
 You can avoid this pitfall by sending notifications from template methods (Template Method (325)) in abstract Subject classes. Define a primitive operation for subclasses to override, and make Notify the last operation in the template method, which will ensure that the object is self-consistent when subclasses override Subject operations.
 
-image
+```cpp
+
+```
 
 By the way, it’s always a good idea to document which Subject operations trigger notifications.
 
@@ -126,11 +126,15 @@ The pull model emphasizes the subject’s ignorance of its observers, whereas th
 
 7. Specifying modifications of interest explicitly. You can improve update efficiency by extending the subject’s registration interface to allow registering observers only for specific events of interest. When such an event occurs, the subject informs only those observers that have registered interest in that event. One way to support this uses the notion of aspects for Subject objects. To register interest in particular events, observers are attached to their subjects using
 
-image
+```cpp
+
+```
 
 where interest specifies the event of interest. At notification time, the subject supplies the changed aspect to its observers as a parameter to the Update operation. For example:
 
-image
+```cpp
+
+```
 
 8. Encapsulating complex update semantics. When the dependency relationship between subjects and observers is particularly complex, an object that maintains these relationships might be required. We call such an object a Change-Manager. Its purpose is to minimize the work required to make observers reflect a change in their subject. For example, if an operation involves changes to several interdependent subjects, you might have to ensure that their observers are notified only after all the subjects have been modified to avoid notifying observers more than once.
 
@@ -144,7 +148,9 @@ ChangeManager has three responsibilities:
 
 The following diagram depicts a simple ChangeManager-based implementation of the Observer pattern. There are two specialized ChangeManagers. SimpleChangeManager is naive in that it always updates all observers of each subject. In contrast, DAGChangeManager handles directed-acyclic graphs of dependencies between subjects and their observers. A DAGChangeManager is preferable to a SimpleChangeManager when an observer observes more than one subject. In that case, a change in two or more subjects might cause redundant updates. The DAGChangeManager ensures the observer receives just one update. SimpleChangeManager is fine when multiple updates aren’t an issue.
 
-image
+```cpp
+
+```
 
 ChangeManager is an instance of the Mediator (273) pattern. In general there is only one ChangeManager, and it is known globally. The Singleton (127) pattern would be useful here.
 
@@ -154,37 +160,53 @@ Sample Code
 
 An abstract class defines the Observer interface:
 
-image
+```cpp
+
+```
 
 This implementation supports multiple subjects for each observer. The subject passed to the Update operation lets the observer determine which subject changed when it observes more than one.
 
 Similarly, an abstract class defines the Subject interface:
 
-image
+```cpp
+
+```
 
 ClockTimer is a concrete subject for storing and maintaining the time of day. It notifies its observers every second. ClockTimer provides the interface for retrieving individual time units such as the hour, minute, and second.
 
-image
+```cpp
+
+```
 
 The Tick operation gets called by an internal timer at regular intervals to provide an accurate time base. Tick updates the ClockTimer’s internal state and calls Notify to inform observers of the change:
 
-image
+```cpp
+
+```
 
 Now we can define a class DigitalClock that displays the time. It inherits its graphical functionality from a Widget class provided by a user interface toolkit. The Observer interface is mixed into the DigitalClock interface by inheriting from Observer.
 
-image
+```cpp
+
+```
 
 Before the Update operation draws the clock face, it checks to make sure the notifying subject is the clock’s subject:
 
-image
+```cpp
+
+```
 
 An AnalogClock class can be defined in the same way.
 
-image
+```cpp
+
+```
 
 The following code creates an AnalogClock and a DigitalClock that always show the same time:
 
-image
+```cpp
+
+```
 
 Whenever the timer ticks, the two clocks will be updated and will redisplay themselves appropriately.
 

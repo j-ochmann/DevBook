@@ -1,56 +1,57 @@
-Object Structural: Facade
+---
+id: "facade"
+title: "Object Structural: Facade"
+category: "Structural"
+goF: 10
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Facade
 
-Intent
+## Intent
 
 Provide a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level interface that makes the subsystem easier to use.
 
-Motivation
+## Motivation
 
 Structuring a system into subsystems helps reduce complexity. A common design goal is to minimize the communication and dependencies between subsystems. One way to achieve this goal is to introduce a facade object that provides a single, simplified interface to the more general facilities of a subsystem.
 
-image
+```cpp
+
+```
 
 Consider for example a programming environment that gives applications access to its compiler subsystem. This subsystem contains classes such as Scanner, Parser, ProgramNode, BytecodeStream, and ProgramNodeBuilder that implement the compiler. Some specialized applications might need to access these classes directly. But most clients of a compiler generally don’t care about details like parsing and code generation; they merely want to compile some code. For them, the powerful but low-level interfaces in the compiler subsystem only complicate their task.
 
 To provide a higher-level interface that can shield clients from these classes, the compiler subsystem also includes a Compiler class. This class defines a unified interface to the compiler’s functionality. The Compiler class acts as a facade: It offers clients a single, simple interface to the compiler subsystem. It glues together the classes that implement compiler functionality without hiding them completely. The compiler facade makes life easier for most programmers without hiding the lower-level functionality from the few that need it.
 
-image
+```cpp
+
+```
 
 Applicability
 
 Use the Facade pattern when
-
-• you want to provide a simple interface to a complex subsystem. Subsystems often get more complex as they evolve. Most patterns, when applied, result in more and smaller classes. This makes the subsystem more reusable and easier to customize, but it also becomes harder to use for clients that don’t need to customize it. A facade can provide a simple default view of the subsystem that is good enough for most clients. Only clients needing more customizability will need to look beyond the facade.
-
-• there are many dependencies between clients and the implementation classes of an abstraction. Introduce a facade to decouple the subsystem from clients and other subsystems, thereby promoting subsystem independence and portability.
-
-• you want to layer your subsystems. Use a facade to define an entry point to each subsystem level. If subsystems are dependent, then you can simplify the dependencies between them by making them communicate with each other solely through their facades.
++ you want to provide a simple interface to a complex subsystem. Subsystems often get more complex as they evolve. Most patterns, when applied, result in more and smaller classes. This makes the subsystem more reusable and easier to customize, but it also becomes harder to use for clients that don’t need to customize it. A facade can provide a simple default view of the subsystem that is good enough for most clients. Only clients needing more customizability will need to look beyond the facade.
++ there are many dependencies between clients and the implementation classes of an abstraction. Introduce a facade to decouple the subsystem from clients and other subsystems, thereby promoting subsystem independence and portability.
++ you want to layer your subsystems. Use a facade to define an entry point to each subsystem level. If subsystems are dependent, then you can simplify the dependencies between them by making them communicate with each other solely through their facades.
 
 Structure
 
-image
+```cpp
+
+```
 
 Participants
-
-• Facade (Compiler)
-
-– knows which subsystem classes are responsible for a request.
-
-– delegates client requests to appropriate subsystem objects.
-
-• subsystem classes (Scanner, Parser, ProgramNode, etc.)
-
-– implement subsystem functionality.
-
-– handle work assigned by the Facade object.
-
-– have no knowledge of the facade; that is, they keep no references to it.
++ Facade (Compiler)
+- knows which subsystem classes are responsible for a request.
+- delegates client requests to appropriate subsystem objects.
++ subsystem classes (Scanner, Parser, ProgramNode, etc.)
+- implement subsystem functionality.
+- handle work assigned by the Facade object.
+- have no knowledge of the facade; that is, they keep no references to it.
 
 Collaborations
-
-• Clients communicate with the subsystem by sending requests to Facade, which forwards them to the appropriate subsystem object(s). Although the subsystem objects perform the actual work, the facade may have to do work of its own to translate its interface to subsystem interfaces.
-
-• Clients that use the facade don’t have to access its subsystem objects directly.
++ Clients communicate with the subsystem by sending requests to Facade, which forwards them to the appropriate subsystem object(s). Although the subsystem objects perform the actual work, the facade may have to do work of its own to translate its interface to subsystem interfaces.
++ Clients that use the facade don’t have to access its subsystem objects directly.
 
 Consequences
 
@@ -86,33 +87,47 @@ The compiler subsystem defines a BytecodeStream class that implements a stream o
 
 The Scanner class takes a stream of characters and produces a stream of tokens, one token at a time.
 
-image
+```cpp
+
+```
 
 The class Parser uses a ProgramNodeBuilder to construct a parse tree from a Scanner’s tokens.
 
-image
+```cpp
+
+```
 
 Parser calls back on ProgramNodeBuilder to build the parse tree incrementally. These classes interact according to the Builder (97) pattern.
 
-image
+```cpp
+
+```
 
 The parse tree is made up of instances of ProgramNode subclasses such as StatementNode, ExpressionNode, and so forth. The ProgramNode hierarchy is an example of the Composite (163) pattern. ProgramNode defines an interface for manipulating the program node and its children, if any.
 
-image
+```cpp
+
+```
 
 The Traverse operation takes a CodeGenerator object. ProgramNode subclasses use this object to generate machine code in the form of Bytecode objects on a BytecodeStream. The class CodeGenerator is a visitor (see Visitor (331)).
 
-image
+```cpp
+
+```
 
 CodeGenerator has subclasses, for example, StackMachineCodeGenerator and RISCCodeGenerator, that generate machine code for different hardware architectures.
 
 Each subclass of ProgramNode implements Traverse to call Traverse on its child ProgramNode objects. In turn, each child does the same for its children, and so on recursively. For example, ExpressionNode defines Traverse as follows:
 
-image
+```cpp
+
+```
 
 The classes we’ve discussed so far make up the compiler subsystem. Now we’ll introduce a Compiler class, a facade that puts all these pieces together. Compiler provides a simple interface for compiling source and generating code for a particular machine.
 
-image
+```cpp
+
+```
 
 This implementation hard-codes the type of code generator to use so that programmers aren’t required to specify the target architecture. That might be reasonable if there’s only ever one target architecture. If that’s not the case, then we might want to change the Compiler constructor to take a CodeGenerator parameter. Then programmers can specify the generator to use when they instantiate Compiler. The compiler facade can parameterize other participants such as Scanner and ProgramNodeBuilder as well, which adds flexibility, but it also detracts from the Facade pattern’s mission, which is to simplify the interface for the common case.
 
@@ -126,17 +141,16 @@ An ET++ application can also forgo built-in browsing support. In that case, Prog
 
 The Choices operating system [CIRM93] uses facades to compose many frameworks into one. The key abstractions in Choices are processes, storage, and address spaces. For each of these abstractions there is a corresponding subsystem, implemented as a framework, that supports porting Choices to a variety of different hardware platforms. Two of these subsystems have a “representative” (i.e., facade). These representatives are FileSystemInterface (storage) and Domain (address spaces).
 
-image
+```cpp
+
+```
 
 For example, the virtual memory framework has Domain as its facade. A Domain represents an address space. It provides a mapping between virtual addresses and offsets into memory objects, files, or backing store. The main operations on Domain support adding a memory object at a particular address, removing a memory object, and handling a page fault.
 
 As the preceding diagram shows, the virtual memory subsystem uses the following components internally:
-
-• MemoryObject represents a data store.
-
-• MemoryObjectCache caches the data of MemoryObjects in physical memory. MemoryObjectCache is actually a Strategy (315) that localizes the caching policy.
-
-• AddressTranslation encapsulates the address translation hardware.
++ MemoryObject represents a data store.
++ MemoryObjectCache caches the data of MemoryObjects in physical memory. MemoryObjectCache is actually a Strategy (315) that localizes the caching policy.
++ AddressTranslation encapsulates the address translation hardware.
 
 The RepairFault operation is called whenever a page fault interrupt occurs. The Domain finds the memory object at the address causing the fault and delegates the RepairFault operation to the cache associated with that memory object. Domains can be customized by changing their components.
 

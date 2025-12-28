@@ -1,14 +1,21 @@
-Object Structural: Proxy
+---
+id: "proxy"
+title: "Object Structural: Proxy"
+category: "Structural"
+goF: 12
+tags: ["cpp", "java", "python"]
+---
+# Object Structural: Proxy
 
-Intent
+## Intent
 
 Provide a surrogate or placeholder for another object to control access to it.
 
-Also Known As
+## Also Known As
 
 Surrogate
 
-Motivation
+## Motivation
 
 One reason for controlling access to an object is to defer the full cost of its creation and initialization until we actually need to use it. Consider a document editor that can embed graphical objects in a document. Some graphical objects, like large raster images, can be expensive to create. But opening a document should be fast, so we should avoid creating all the expensive objects at once when the document is opened. This isn’t necessary anyway, because not all of these objects will be visible in the document at the same time.
 
@@ -16,7 +23,9 @@ These constraints would suggest creating each expensive object on demand, which 
 
 The solution is to use another object, an image proxy, that acts as a stand-in for the real image. The proxy acts just like the image and takes care of instantiating it when it’s required.
 
-image
+```cpp
+
+```
 
 The image proxy creates the real image only when the document editor asks it to display itself by invoking its Draw operation. The proxy forwards subsequent requests directly to the image. It must therefore keep a reference to the image after creating it.
 
@@ -24,7 +33,9 @@ Let’s assume that images are stored in separate files. In this case we can use
 
 The following class diagram illustrates this example in more detail.
 
-image
+```cpp
+
+```
 
 The document editor accesses embedded images through the interface defined by the abstract Graphic class. ImageProxy is a class for images that are created on demand. ImageProxy maintains the file name as a reference to the image on disk. The file name is passed as an argument to the ImageProxy constructor.
 
@@ -41,50 +52,38 @@ Proxy is applicable whenever there is a need for a more versatile or sophisticat
 3. A protection proxy controls access to the original object. Protection proxies are useful when objects should have different access rights. For example, KernelProxies in the Choices operating system [CIRM93] provide protected access to operating system objects.
 
 4. A smart reference is a replacement for a bare pointer that performs additional actions when an object is accessed. Typical uses include
-
-• counting the number of references to the real object so that it can be freed automatically when there are no more references (also called smart pointers [Ede92]).
-
-• loading a persistent object into memory when it’s first referenced.
-
-• checking that the real object is locked before it’s accessed to ensure that no other object can change it.
++ counting the number of references to the real object so that it can be freed automatically when there are no more references (also called smart pointers [Ede92]).
++ loading a persistent object into memory when it’s first referenced.
++ checking that the real object is locked before it’s accessed to ensure that no other object can change it.
 
 Structure
 
-image
+```cpp
+
+```
 
 Here’s a possible object diagram of a proxy structure at run-time:
 
-image
+```cpp
+
+```
 
 Participants
-
-• Proxy (ImageProxy)
-
-– maintains a reference that lets the proxy access the real subject. Proxy may refer to a Subject if the RealSubject and Subject interfaces are the same.
-
-– provides an interface identical to Subject’s so that a proxy can by substituted for the real subject.
-
-– controls access to the real subject and may be responsible for creating and deleting it.
-
-– other responsibilities depend on the kind of proxy:
-
-• remote proxies are responsible for encoding a request and its arguments and for sending the encoded request to the real subject in a different address space.
-
-• virtual proxies may cache additional information about the real subject so that they can postpone accessing it. For example, the ImageProxy from the Motivation caches the real image’s extent.
-
-• protection proxies check that the caller has the access permissions required to perform a request.
-
-• Subject (Graphic)
-
-– defines the common interface for RealSubject and Proxy so that a Proxy can be used anywhere a RealSubject is expected.
-
-• RealSubject (Image)
-
-– defines the real object that the proxy represents.
++ Proxy (ImageProxy)
+- maintains a reference that lets the proxy access the real subject. Proxy may refer to a Subject if the RealSubject and Subject interfaces are the same.
+- provides an interface identical to Subject’s so that a proxy can by substituted for the real subject.
+- controls access to the real subject and may be responsible for creating and deleting it.
+- other responsibilities depend on the kind of proxy:
++ remote proxies are responsible for encoding a request and its arguments and for sending the encoded request to the real subject in a different address space.
++ virtual proxies may cache additional information about the real subject so that they can postpone accessing it. For example, the ImageProxy from the Motivation caches the real image’s extent.
++ protection proxies check that the caller has the access permissions required to perform a request.
++ Subject (Graphic)
+- defines the common interface for RealSubject and Proxy so that a Proxy can be used anywhere a RealSubject is expected.
++ RealSubject (Image)
+- defines the real object that the proxy represents.
 
 Collaborations
-
-• Proxy forwards requests to RealSubject when appropriate, depending on the kind of proxy.
++ Proxy forwards requests to RealSubject when appropriate, depending on the kind of proxy.
 
 Consequences
 
@@ -110,15 +109,21 @@ The Proxy pattern can exploit the following language features:
 
 The following example illustrates how to use this technique to implement a virtual proxy called ImagePtr.
 
-image
+```cpp
+
+```
 
 The overloaded -> and * operators use LoadImage to return _image to callers (loading it if necessary).
 
-image
+```cpp
+
+```
 
 This approach lets you call Image operations through ImagePtr objects without going to the trouble of making the operations part of the ImagePtr interface:
 
-image
+```cpp
+
+```
 
 Notice how the image proxy acts like a pointer, but it’s not declared to be a pointer to an Image. That means you can’t use it exactly like a real pointer to an Image. Hence clients must treat Image and ImagePtr objects differently in this approach.
 
@@ -146,47 +151,67 @@ The following code implements two kinds of proxy: the virtual proxy described in
 
 1. A virtual proxy. The Graphic class defines the interface for graphical objects:
 
-image
+```cpp
+
+```
 
 The Image class implements the Graphic interface to display image files. Image overrides HandleMouse to let users resize the image interactively.
 
-image
+```cpp
+
+```
 
 ImageProxy has the same interface as Image:
 
-image
+```cpp
+
+```
 
 The constructor saves a local copy of the name of the file that stores the image, and it initializes _extent and _image:
 
-image
+```cpp
+
+```
 
 The implementation of GetExtent returns the cached extent if possible; otherwise the image is loaded from the file. Draw loads the image, and HandleMouse forwards the event to the real image.
 
-image
+```cpp
+
+```
 
 The Save operation saves the cached image extent and the image file name to a stream. Load retrieves this information and initializes the corresponding members.
 
-image
+```cpp
+
+```
 
 Finally, suppose we have a class TextDocument that can contain Graphic objects:
 
-image
+```cpp
+
+```
 
 We can insert an ImageProxy into a text document like this:
 
-image
+```cpp
+
+```
 
 2. Proxies that use doesNotUnderstand. You can make generic proxies in Smalltalk by defining classes whose superclass is nil8 and defining the doesNotUnderstand: method to handle messages.
 
 The following method assumes the proxy has a realSubject method that returns its real subject. In the case of ImageProxy, this method would check to see if the the Image had been created, create it if necessary, and finally return it. It uses perform:withArguments: to perform the message being trapped on the real subject.
 
-image
+```cpp
+
+```
 
 The argument to doesNotUnderstand: is an instance of Message that represents the message not understood by the proxy. So the proxy responds to all messages by making sure that the real subject exists before forwarding the message to it.
 
 One of the advantages of doesNotUnderstand: is it can perform arbitrary processing. For example, we could produce a protection proxy by specifying a set legalMessages of messages to accept and then giving the proxy the following method:
 
-image
+```cpp
+
+```
 
 This method checks to see that a message is legal before forwarding it to the real subject. If it isn’t legal, then it will send error: to the proxy, which will result in an infinite loop of errors unless the proxy defines error:. Consequently, the definition of error: should be copied from class Object along with any methods it uses.
 
